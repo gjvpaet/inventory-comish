@@ -1,5 +1,6 @@
 const morgan = require('morgan');
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const app = express();
@@ -7,6 +8,8 @@ const app = express();
 const productRoutes = require('./routes/products');
 const inventoryRoutes = require('./routes/inventory');
 const transactionRoutes = require('./routes/transactions');
+
+mongoose.connect('mongodb://127.0.0.1/inventory');
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -30,3 +33,5 @@ app.use((error, req, res, next) => {
         }
     });
 });
+
+module.exports = app;
