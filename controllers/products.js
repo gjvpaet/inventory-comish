@@ -95,3 +95,15 @@ exports.getProduct = async (req, res, next) => {
         res.status(500).json({ error });
     }
 };
+
+exports.deleteProduct = async (req, res, next) => {
+    try {
+        let { productId } = req.params;
+        let deletedProduct = await Product.remove({ _id: productId });
+
+        res.status(200).json({ message: 'Item successfully deleted.' });
+    } catch (error) {
+        console.log('error: ', error);
+        res.status(500).json({ error });
+    }
+};
