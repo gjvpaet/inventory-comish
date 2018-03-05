@@ -11,7 +11,7 @@ exports.getAll = async (req, res, next) => {
         const response = {
             list: products,
             count: products.length,
-            message: 'Successfully fetched data'
+            message: 'Items successfully fetched.'
         };
 
         res.status(200).json(response);
@@ -63,6 +63,30 @@ exports.updateProduct = async (req, res, next) => {
         const response = {
             content: updatedProduct,
             message: 'Item successfully updated.'
+        };
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.log('error: ', error);
+        res.status(500).json({ error });
+    }
+};
+
+exports.getProduct = async (req, res, next) => {
+    try {
+        let { productId } = req.params;
+
+        let product = await Product.findById(productId)
+            .select('_id basePrice description sellingPrice')
+            .exec();
+
+        if (!product) {
+            res.status(404).json({ message: 'Item not found.' });
+        }
+
+        const response = {
+            content: product,
+            message: 'Item successfully fetched.'
         };
 
         res.status(200).json(response);
