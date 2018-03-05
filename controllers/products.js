@@ -45,3 +45,29 @@ exports.createProduct = async (req, res, next) => {
         res.status(500).json({ error });
     }
 };
+
+exports.updateProduct = async (req, res, next) => {
+    try {
+        let { productId } = req.params;
+        let { basePrice, description, sellingPrice } = req.body;
+
+        await Product.update(
+            { _id: productId },
+            { $set: { basePrice, description, sellingPrice } }
+        ).exec();
+
+        let updatedProduct = await Product.findById(productId)
+            .select('_id basePrice description sellingPrice')
+            .exec();
+
+        const response = {
+            content: updatedProduct,
+            message: 'Item successfully updated.'
+        };
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.log('error: ', error);
+        res.status(500).json({ error });
+    }
+};
