@@ -2,7 +2,15 @@ const mongoose = require('mongoose');
 
 const transactionSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    totalQuantity: {
+    originalQuantity: {
+        type: Number,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true
+    },
+    newQuantity: {
         type: Number,
         required: true
     },
