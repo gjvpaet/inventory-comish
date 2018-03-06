@@ -10,13 +10,39 @@ exports.getAll = async (req, res, next) => {
             .select('_id basePrice description sellingPrice')
             .exec();
 
-        const response = {
-            list: products,
-            count: products.length,
-            message: 'Items successfully fetched.'
-        };
+        products = products.map(async product => {
+            let inventory = await Inventory.where('product')
+                .equals(product._id)
+                .exec();
 
-        res.status(200).json(response);
+            let quantityFields = _.pick(inventory[0], [
+                'quantity',
+                'warningQuantity'
+            ]);
+
+            product = { ...product.toObject(), ...quantityFields };
+            return product;
+        });
+
+        let resArr = [];
+
+        products.map((product, index) => {
+            if (index === products.length - 1) {
+                product.then(result => {
+                    resArr.push(result);
+
+                    const response = {
+                        list: resArr,
+                        count: products.length,
+                        message: 'Items successfully fetched.'
+                    };
+            
+                    res.status(200).json(response);
+                });   
+            } else {
+                product.then(result => resArr.push(result));
+            }
+        });
     } catch (error) {
         console.log('error: ', error);
         res.status(500).json({ error });
@@ -42,7 +68,12 @@ exports.createProduct = async (req, res, next) => {
     try {
         let createdProduct = await product.save();
 
-        let productFields = _.pick(createdProduct, ['_id', 'basePrice', 'description', 'sellingPrice']);
+        let productFields = _.pick(createdProduct, [
+            '_id',
+            'basePrice',
+            'description',
+            'sellingPrice'
+        ]);
 
         const inventory = new Inventory({
             _id: new mongoose.Types.ObjectId(),
