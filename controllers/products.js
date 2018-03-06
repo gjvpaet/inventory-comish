@@ -1,6 +1,8 @@
+const _ = require('lodash/object');
 const mongoose = require('mongoose');
 
 const Product = require('../models/product');
+const Inventory = require('../models/inventory');
 
 exports.getAll = async (req, res, next) => {
     try {
@@ -22,7 +24,13 @@ exports.getAll = async (req, res, next) => {
 };
 
 exports.createProduct = async (req, res, next) => {
-    let { basePrice, description, sellingPrice } = req.body;
+    let {
+        quantity,
+        basePrice,
+        description,
+        sellingPrice,
+        warningQuantity
+    } = req.body;
 
     const product = new Product({
         _id: new mongoose.Types.ObjectId(),
@@ -34,8 +42,24 @@ exports.createProduct = async (req, res, next) => {
     try {
         let createdProduct = await product.save();
 
+        let productFields = _.pick(createdProduct, ['_id', 'basePrice', 'description', 'sellingPrice']);
+
+        const inventory = new Inventory({
+            _id: new mongoose.Types.ObjectId(),
+            quantity,
+            warningQuantity,
+            product: createdProduct._id
+        });
+
+        let createdInventory = await inventory.save();
+
+        let quantityFields = _.pick(createdInventory, [
+            'quantity',
+            'warningQuantity'
+        ]);
+
         const response = {
-            content: createdProduct,
+            content: { ...productFields, ...quantityFields },
             message: 'Item successfully created.'
         };
 
