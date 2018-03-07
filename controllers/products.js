@@ -14,7 +14,7 @@ exports.getAll = async (req, res, next) => {
             let inventory = await Inventory.where('product')
                 .equals(product._id)
                 .exec();
-
+            
             let quantityFields = _.pick(inventory[0], [
                 'quantity',
                 'warningQuantity'
@@ -36,9 +36,9 @@ exports.getAll = async (req, res, next) => {
                         count: products.length,
                         message: 'Items successfully fetched.'
                     };
-            
+
                     res.status(200).json(response);
-                });   
+                });
             } else {
                 product.then(result => resArr.push(result));
             }
@@ -154,7 +154,9 @@ exports.getProduct = async (req, res, next) => {
 exports.deleteProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
-        let deletedProduct = await Product.remove({ _id: productId });
+
+        await Inventory.findOneAndRemove({ productId });
+        await Product.remove({ _id: productId });
 
         res.status(200).json({ message: 'Item successfully deleted.' });
     } catch (error) {
