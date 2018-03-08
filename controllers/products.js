@@ -143,8 +143,15 @@ exports.getProduct = async (req, res, next) => {
             res.status(404).json({ message: 'Item not found.' });
         }
 
+        let inventory = await Inventory.findOne({ product: product._id })
+            .select('_id quantity warningQuantity')
+            .exec();
+
         const response = {
-            content: product,
+            content: {
+                ...product.toObject(),
+                inventory: { ...inventory.toObject() }
+            },
             message: 'Item successfully fetched.'
         };
 
