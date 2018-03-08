@@ -14,13 +14,17 @@ exports.getAll = async (req, res, next) => {
             let inventory = await Inventory.where('product')
                 .equals(product._id)
                 .exec();
-            
-            let quantityFields = _.pick(inventory[0], [
+
+            let inventoryFields = _.pick(inventory[0], [
+                '_id',
                 'quantity',
                 'warningQuantity'
             ]);
 
-            product = { ...product.toObject(), ...quantityFields };
+            product = {
+                ...product.toObject(),
+                inventory: { ...inventoryFields }
+            };
             return product;
         });
 
