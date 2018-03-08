@@ -11,21 +11,16 @@ exports.getAll = async (req, res, next) => {
             .exec();
 
         products = products.map(async product => {
-            let inventory = await Inventory.where('product')
-                .equals(product._id)
+            let inventory = await Inventory.findOne({ product: product._id })
+                .select('_id quantity warningQuantity')
                 .exec();
 
-            let inventoryFields = _.pick(inventory[0], [
-                '_id',
-                'quantity',
-                'warningQuantity'
-            ]);
-
-            product = {
+            let productObj = {
                 ...product.toObject(),
-                inventory: { ...inventoryFields }
+                inventory: { ...inventory.toObject() }
             };
-            return product;
+
+            return productObj;
         });
 
         let resArr = [];
