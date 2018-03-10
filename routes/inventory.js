@@ -4,6 +4,6 @@ const router = express.Router();
 
 const InventoryController = require('../controllers/inventory');
 
-router.put('/:inventoryId', InventoryController.addStock);
+router.put('/:inventoryId', InventoryController.modifyStock);
 
 module.exports = router;

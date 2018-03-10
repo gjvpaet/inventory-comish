@@ -3,15 +3,17 @@ const mongoose = require('mongoose');
 const Inventory = require('../models/inventory');
 const Transaction = require('../models/transaction');
 
-exports.addStock = async (req, res, next) => {
+exports.modifyStock = async (req, res, next) => {
     let { inventoryId } = req.params;
-    let { quantityToAdd } = req.body;
+    let { qty, type } = req.body;
 
     try {
         let inventory = await Inventory.findByIdAndUpdate(inventoryId, {
-            $inc: { quantity: quantityToAdd }
+            $inc: {
+                quantity: type === 'ADD' ? qty : type === 'SUBTRACT' ? -qty : 0
+            }
         }).exec();
-    
+
         let updatedInventory = await Inventory.findById(inventoryId)
             .select('_id quantity product warningQuantity')
             .populate('product')
@@ -20,10 +22,15 @@ exports.addStock = async (req, res, next) => {
         let transaction = new Transaction({
             _id: new mongoose.Types.ObjectId(),
             originalQuantity: inventory.quantity,
-            quantity: quantityToAdd,
+            quantity: qty,
             newQuantity: updatedInventory.quantity,
-            totalPrice: updatedInventory.product.basePrice * quantityToAdd,
-            transactionType: 'ADD',
+            totalPrice:
+                type === 'ADD'
+                    ? updatedInventory.product.basePrice * qty
+                    : type === 'SUBTRACT'
+                        ? updatedInventory.product.sellingPrice * qty
+                        : null,
+            transactionType: type,
             product: updatedInventory.product._id
         });
 
@@ -31,9 +38,14 @@ exports.addStock = async (req, res, next) => {
 
         const response = {
             content: updatedInventory,
-            message: 'Successfully added stock.'
+            message:
+                type === 'ADD'
+                    ? 'Successfully added stock.'
+                    : type === 'SUBTRACT'
+                        ? 'Successfully subtracted stock.'
+                        : ''
         };
-    
+
         res.status(200).json(response);
     } catch (error) {
         console.log('error: ', error);
