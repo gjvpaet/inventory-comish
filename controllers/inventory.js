@@ -34,7 +34,7 @@ exports.addStock = async (req, res, next) => {
             message: 'Successfully added stock.'
         };
     
-        res.json(response);
+        res.status(200).json(response);
     } catch (error) {
         console.log('error: ', error);
         res.status(500).json({ error });
