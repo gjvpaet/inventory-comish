@@ -1,3 +1,4 @@
+const moment = require('moment');
 const _ = require('lodash/object');
 const mongoose = require('mongoose');
 
@@ -7,12 +8,14 @@ const Inventory = require('../models/inventory');
 exports.getAll = async (req, res, next) => {
     try {
         let products = await Product.find()
-            .select('_id basePrice description sellingPrice')
+            .select(
+                '_id basePrice description sellingPrice createdAt updatedAt'
+            )
             .exec();
 
         products = products.map(async product => {
             let inventory = await Inventory.findOne({ product: product._id })
-                .select('_id quantity warningQuantity')
+                .select('_id quantity warningQuantity createdAt updatedAt')
                 .exec();
 
             let productObj = {
@@ -69,6 +72,8 @@ exports.createProduct = async (req, res, next) => {
 
         let productFields = _.pick(createdProduct, [
             '_id',
+            'createdAt',
+            'updatedAt',
             'basePrice',
             'description',
             'sellingPrice'
@@ -86,6 +91,8 @@ exports.createProduct = async (req, res, next) => {
         let quantityFields = _.pick(createdInventory, [
             '_id',
             'quantity',
+            'createdAt',
+            'updatedAt',
             'warningQuantity'
         ]);
 
@@ -108,11 +115,20 @@ exports.updateProduct = async (req, res, next) => {
 
         await Product.update(
             { _id: productId },
-            { $set: { basePrice, description, sellingPrice } }
+            {
+                $set: {
+                    basePrice,
+                    description,
+                    sellingPrice,
+                    updatedAt: moment().format()
+                }
+            }
         ).exec();
 
         let updatedProduct = await Product.findById(productId)
-            .select('_id basePrice description sellingPrice')
+            .select(
+                '_id basePrice description sellingPrice createdAt updatedAt'
+            )
             .exec();
 
         const response = {
@@ -132,7 +148,9 @@ exports.getProduct = async (req, res, next) => {
         let { productId } = req.params;
 
         let product = await Product.findById(productId)
-            .select('_id basePrice description sellingPrice')
+            .select(
+                '_id basePrice description sellingPrice createdAt updatedAt'
+            )
             .exec();
 
         if (!product) {
@@ -140,7 +158,7 @@ exports.getProduct = async (req, res, next) => {
         }
 
         let inventory = await Inventory.findOne({ product: product._id })
-            .select('_id quantity warningQuantity')
+            .select('_id quantity warningQuantity createdAt updatedAt')
             .exec();
 
         const response = {
