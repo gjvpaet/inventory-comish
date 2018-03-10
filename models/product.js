@@ -1,3 +1,4 @@
+const moment = require('moment');
 const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema({
@@ -13,6 +14,16 @@ const productSchema = mongoose.Schema({
     sellingPrice: {
         type: Number,
         required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: moment().format()
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: moment().format()
     }
 });
 

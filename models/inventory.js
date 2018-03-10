@@ -1,3 +1,4 @@
+const moment = require('moment');
 const mongoose = require('mongoose');
 
 const inventorySchema = mongoose.Schema({
@@ -14,6 +15,16 @@ const inventorySchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
         required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: moment().format(),
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: moment().format()
     }
 });
 
