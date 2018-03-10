@@ -84,12 +84,13 @@ exports.createProduct = async (req, res, next) => {
         let createdInventory = await inventory.save();
 
         let quantityFields = _.pick(createdInventory, [
+            '_id',
             'quantity',
             'warningQuantity'
         ]);
 
         const response = {
-            content: { ...productFields, ...quantityFields },
+            content: { ...productFields, inventory: { ...quantityFields } },
             message: 'Item successfully created.'
         };
 
