@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const Product = require('../models/product');
 const Inventory = require('../models/inventory');
+const Transaction = require('../models/transaction');
 
 exports.getAll = async (req, res, next) => {
     try {
@@ -66,6 +67,18 @@ exports.createProduct = async (req, res, next) => {
         });
 
         let createdProduct = await product.save();
+
+        const transaction = new Transaction({
+            _id: new mongoose.Types.ObjectId(),
+            originalQuantity: 0,
+            quantity: inventory.quantity,
+            newQuantity: inventory.quantity,
+            totalPrice: inventory.quantity * product.basePrice,
+            transactionType: 'ADD',
+            product: product._id
+        });
+
+        await transaction.save();
 
         const response = {
             content: {
