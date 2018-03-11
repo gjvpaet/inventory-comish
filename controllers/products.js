@@ -1,5 +1,4 @@
 const moment = require('moment');
-const _ = require('lodash/object');
 const mongoose = require('mongoose');
 
 const Product = require('../models/product');
