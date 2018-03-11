@@ -5,14 +5,29 @@ const Transaction = require('../models/transaction');
 exports.getAllTransactions = async (req, res, next) => {
     try {
         let transactions = await Transaction.find()
-            .select(
-                '_id quantity originalQuantity newQuantity totalPrice product transactionType'
-            )
             .populate('product')
             .exec();
-
+        console.log(transactions);
         const response = {
-            list: transactions,
+            list: transactions.map(transaction => {
+                return {
+                    Id: transaction._id,
+                    Quantity: transaction.quantity,
+                    OriginalQuantity: transaction.originalQuantity,
+                    NewQuantity: transaction.newQuantity,
+                    TotalPrice: transaction.totalPrice,
+                    TransactionType: transaction.transactionType,
+                    Product: {
+                        Id: transaction.product._id,
+                        BasePrice: transaction.product.basePrice,
+                        Description: transaction.product.description,
+                        SellingPrice: transaction.product.sellingPrice,
+                        CreatedAt: transaction.product.createdAt,
+                        UpdatedAt: transaction.product.updatedAt
+                    },
+                    CreatedAt: transaction.createdAt
+                };
+            }),
             count: transactions.length,
             message: 'Successfully fetched transactions.'
         };
