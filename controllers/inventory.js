@@ -1,3 +1,4 @@
+const moment = require('moment');
 const mongoose = require('mongoose');
 
 const Inventory = require('../models/inventory');
@@ -11,11 +12,12 @@ exports.modifyStock = async (req, res, next) => {
         let inventory = await Inventory.findByIdAndUpdate(inventoryId, {
             $inc: {
                 quantity: type === 'ADD' ? qty : type === 'SUBTRACT' ? -qty : 0
-            }
+            },
+            $set: { updatedAt: moment().format() }
         }).exec();
 
         let updatedInventory = await Inventory.findById(inventoryId)
-            .select('_id quantity product warningQuantity')
+            .select('_id quantity product warningQuantity createdAt updatedAt')
             .populate('product')
             .exec();
 
