@@ -41,27 +41,27 @@ exports.getAll = async (req, res, next) => {
 
 exports.createProduct = async (req, res, next) => {
     let {
-        quantity,
-        basePrice,
-        description,
-        sellingPrice,
-        warningQuantity
+        Quantity,
+        BasePrice,
+        Description,
+        SellingPrice,
+        WarningQuantity
     } = req.body;
 
     try {
         const inventory = new Inventory({
             _id: new mongoose.Types.ObjectId(),
-            quantity,
-            warningQuantity
+            quantity: Quantity,
+            warningQuantity: WarningQuantity
         });
 
         let createdInventory = await inventory.save();
 
         const product = new Product({
             _id: new mongoose.Types.ObjectId(),
-            basePrice,
-            description,
-            sellingPrice,
+            basePrice: BasePrice,
+            description: Description,
+            sellingPrice: SellingPrice,
             inventory: inventory._id
         });
 
@@ -96,15 +96,15 @@ exports.createProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
-        let { basePrice, description, sellingPrice } = req.body;
+        let { BasePrice, Description, SellingPrice } = req.body;
 
         await Product.update(
             { _id: productId },
             {
                 $set: {
-                    basePrice,
-                    description,
-                    sellingPrice,
+                    basePrice: BasePrice,
+                    description: Description,
+                    sellingPrice: SellingPrice,
                     updatedAt: moment().format()
                 }
             }
