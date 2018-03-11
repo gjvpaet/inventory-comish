@@ -7,12 +7,12 @@ const Transaction = require('../models/transaction');
 
 exports.modifyStock = async (req, res, next) => {
     let { inventoryId } = req.params;
-    let { qty, type } = req.body;
+    let { Qty, Type } = req.body;
 
     try {
         let inventory = await Inventory.findByIdAndUpdate(inventoryId, {
             $inc: {
-                quantity: type === 'ADD' ? qty : type === 'SUBTRACT' ? -qty : 0
+                quantity: Type === 'ADD' ? Qty : Type === 'SUBTRACT' ? -Qty : 0
             },
             $set: { updatedAt: moment().format() }
         }).exec();
@@ -26,15 +26,15 @@ exports.modifyStock = async (req, res, next) => {
         let transaction = new Transaction({
             _id: new mongoose.Types.ObjectId(),
             originalQuantity: inventory.quantity,
-            quantity: qty,
+            quantity: Qty,
             newQuantity: updatedInventory.quantity,
             totalPrice:
-                type === 'ADD'
-                    ? product.basePrice * qty
-                    : type === 'SUBTRACT'
-                        ? product.sellingPrice * qty
+                Type === 'ADD'
+                    ? product.basePrice * Qty
+                    : Type === 'SUBTRACT'
+                        ? product.sellingPrice * Qty
                         : null,
-            transactionType: type,
+            transactionType: Type,
             product: product._id
         });
 
@@ -57,9 +57,9 @@ exports.modifyStock = async (req, res, next) => {
                 UpdatedAt: updatedInventory.updatedAt
             },
             message:
-                type === 'ADD'
+                Type === 'ADD'
                     ? 'Successfully added stock.'
-                    : type === 'SUBTRACT'
+                    : Type === 'SUBTRACT'
                         ? 'Successfully subtracted stock.'
                         : ''
         };
