@@ -7,7 +7,7 @@ exports.getAllTransactions = async (req, res, next) => {
         let transactions = await Transaction.find()
             .populate('product')
             .exec();
-        console.log(transactions);
+        
         const response = {
             list: transactions.map(transaction => {
                 return {

@@ -8,73 +8,32 @@ const Inventory = require('../models/inventory');
 exports.getAll = async (req, res, next) => {
     try {
         let products = await Product.find()
-            .select(
-                '_id basePrice description sellingPrice createdAt updatedAt'
-            )
+            .populate('inventory')
             .exec();
 
-        products = products.map(async product => {
-            let inventory = await Inventory.findOne({ product: product._id })
-                .select('_id quantity warningQuantity createdAt updatedAt')
-                .exec();
+        const response = {
+            list: products.map(product => {
+                return {
+                    Id: product._id,
+                    BasePrice: product.basePrice,
+                    Description: product.description,
+                    SellingPrice: product.sellingPrice,
+                    Inventory: {
+                        Id: product.inventory._id,
+                        Quantity: product.inventory.quantity,
+                        WarningQuantity: product.inventory.warningQuantity,
+                        CreatedAt: product.inventory.createdAt,
+                        UpdatedAt: product.inventory.updatedAt
+                    },
+                    CreatedAt: product.createdAt,
+                    UpdatedAt: product.updatedAt
+                };
+            }),
+            count: products.length,
+            message: 'Items successfully fetched.'
+        };
 
-            let productObj = {
-                ...product.toObject(),
-                inventory: { ...inventory.toObject() }
-            };
-
-            return productObj;
-        });
-
-        let resArr = [];
-
-        products.map((product, index) => {
-            if (index === products.length - 1) {
-                product.then(result => {
-                    resArr.push({
-                        Id: result._id,
-                        Description: result.description,
-                        BasePrice: result.basePrice,
-                        SellinPrice: result.sellingPrice,
-                        Inventory: {
-                            Id: result.inventory._id,
-                            Quantity: result.inventory.quantity,
-                            WarningQuantity: result.inventory.warningQuantity,
-                            CreatedAt: result.inventory.createdAt,
-                            UpdatedAt: result.inventory.updatedAt
-                        },
-                        CreatedAt: result.createdAt,
-                        UpdatedAt: result.updatedAt
-                    });
-
-                    const response = {
-                        list: resArr,
-                        count: products.length,
-                        message: 'Items successfully fetched.'
-                    };
-
-                    res.status(200).json(response);
-                });
-            } else {
-                product.then(result =>
-                    resArr.push({
-                        Id: result._id,
-                        Description: result.description,
-                        BasePrice: result.basePrice,
-                        SellinPrice: result.sellingPrice,
-                        Inventory: {
-                            Id: result.inventory._id,
-                            Quantity: result.inventory.quantity,
-                            WarningQuantity: result.inventory.warningQuantity,
-                            CreatedAt: result.inventory.createdAt,
-                            UpdatedAt: result.inventory.updatedAt
-                        },
-                        CreatedAt: result.createdAt,
-                        UpdatedAt: result.updatedAt
-                    })
-                );
-            }
-        });
+        res.status(200).json(response);
     } catch (error) {
         console.log('error: ', error);
         res.status(500).json({ error });
@@ -90,24 +49,24 @@ exports.createProduct = async (req, res, next) => {
         warningQuantity
     } = req.body;
 
-    const product = new Product({
-        _id: new mongoose.Types.ObjectId(),
-        basePrice,
-        description,
-        sellingPrice
-    });
-
     try {
-        let createdProduct = await product.save();
-
         const inventory = new Inventory({
             _id: new mongoose.Types.ObjectId(),
             quantity,
-            warningQuantity,
-            product: createdProduct._id
+            warningQuantity
         });
 
         let createdInventory = await inventory.save();
+
+        const product = new Product({
+            _id: new mongoose.Types.ObjectId(),
+            basePrice,
+            description,
+            sellingPrice,
+            inventory: inventory._id
+        });
+
+        let createdProduct = await product.save();
 
         const response = {
             content: {
@@ -152,9 +111,9 @@ exports.updateProduct = async (req, res, next) => {
             }
         ).exec();
 
-        let updatedProduct = await Product.findById(productId).exec();
-
-        let inventory = await Inventory.findOne({ product: productId }).exec();
+        let updatedProduct = await Product.findById(productId)
+            .populate('inventory')
+            .exec();
 
         const response = {
             content: {
@@ -163,11 +122,11 @@ exports.updateProduct = async (req, res, next) => {
                 Description: updatedProduct.description,
                 SellingPrice: updatedProduct.sellingPrice,
                 Inventory: {
-                    Id: inventory._id,
-                    Quantity: inventory.quantity,
-                    WarningQuantity: inventory.warningQuantity,
-                    CreatedAt: inventory.createdAt,
-                    UpdatedAt: inventory.updatedAt
+                    Id: updatedProduct.inventory._id,
+                    Quantity: updatedProduct.inventory.quantity,
+                    WarningQuantity: updatedProduct.inventory.warningQuantity,
+                    CreatedAt: updatedProduct.inventory.createdAt,
+                    UpdatedAt: updatedProduct.inventory.updatedAt
                 },
                 CreatedAt: updatedProduct.createdAt,
                 UpdatedAt: updatedProduct.updatedAt
@@ -186,15 +145,13 @@ exports.getProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
 
-        let product = await Product.findById(productId).exec();
+        let product = await Product.findById(productId)
+            .populate('inventory')
+            .exec();
 
         if (!product) {
             res.status(404).json({ message: 'Item not found.' });
         }
-
-        let inventory = await Inventory.findOne({
-            product: product._id
-        }).exec();
 
         const response = {
             content: {
@@ -203,11 +160,11 @@ exports.getProduct = async (req, res, next) => {
                 Description: product.description,
                 SellingPrice: product.sellingPrice,
                 Inventory: {
-                    Id: inventory._id,
-                    Quantity: inventory.quantity,
-                    WarningQuantity: inventory.warningQuantity,
-                    CreatedAt: inventory.createdAt,
-                    UpdatedAt: inventory.updatedAt
+                    Id: product.inventory._id,
+                    Quantity: product.inventory.quantity,
+                    WarningQuantity: product.inventory.warningQuantity,
+                    CreatedAt: product.inventory.createdAt,
+                    UpdatedAt: product.inventory.updatedAt
                 },
                 CreatedAt: product.createdAt,
                 UpdatedAt: product.updatedAt
@@ -226,8 +183,8 @@ exports.deleteProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
 
-        await Inventory.findOneAndRemove({ productId });
-        await Product.remove({ _id: productId });
+        let deletedProduct = await Product.findOneAndRemove(productId);
+        await Inventory.remove({ _id: deletedProduct.inventory._id });
 
         res.status(200).json({ message: 'Item successfully deleted.' });
     } catch (error) {

@@ -11,11 +11,6 @@ const inventorySchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true
-    },
     createdAt: {
         type: Date,
         required: true,
