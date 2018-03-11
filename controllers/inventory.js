@@ -17,7 +17,6 @@ exports.modifyStock = async (req, res, next) => {
         }).exec();
 
         let updatedInventory = await Inventory.findById(inventoryId)
-            .select('_id quantity product warningQuantity createdAt updatedAt')
             .populate('product')
             .exec();
 
@@ -39,7 +38,21 @@ exports.modifyStock = async (req, res, next) => {
         await transaction.save();
 
         const response = {
-            content: updatedInventory,
+            content: {
+                Id: updatedInventory._id,
+                Quantity: updatedInventory.quantity,
+                WarningQuantity: updatedInventory.warningQuantity,
+                Product: {
+                    Id: updatedInventory.product._id,
+                    BasePrice: updatedInventory.product.basePrice,
+                    Description: updatedInventory.product.description,
+                    SellingPrice: updatedInventory.product.sellingPrice,
+                    CreatedAt: updatedInventory.product.createdAt,
+                    UpdatedAt: updatedInventory.product.updatedAt
+                },
+                CreatedAt: updatedInventory.createdAt,
+                UpdatedAt: updatedInventory.updatedAt
+            },
             message:
                 type === 'ADD'
                     ? 'Successfully added stock.'
