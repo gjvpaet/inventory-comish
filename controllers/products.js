@@ -31,7 +31,21 @@ exports.getAll = async (req, res, next) => {
         products.map((product, index) => {
             if (index === products.length - 1) {
                 product.then(result => {
-                    resArr.push(result);
+                    resArr.push({
+                        Id: result._id,
+                        Description: result.description,
+                        BasePrice: result.basePrice,
+                        SellinPrice: result.sellingPrice,
+                        Inventory: {
+                            Id: result.inventory._id,
+                            Quantity: result.inventory.quantity,
+                            WarningQuantity: result.inventory.warningQuantity,
+                            CreatedAt: result.inventory.createdAt,
+                            UpdatedAt: result.inventory.updatedAt
+                        },
+                        CreatedAt: result.createdAt,
+                        UpdatedAt: result.updatedAt
+                    });
 
                     const response = {
                         list: resArr,
@@ -42,7 +56,23 @@ exports.getAll = async (req, res, next) => {
                     res.status(200).json(response);
                 });
             } else {
-                product.then(result => resArr.push(result));
+                product.then(result =>
+                    resArr.push({
+                        Id: result._id,
+                        Description: result.description,
+                        BasePrice: result.basePrice,
+                        SellinPrice: result.sellingPrice,
+                        Inventory: {
+                            Id: result.inventory._id,
+                            Quantity: result.inventory.quantity,
+                            WarningQuantity: result.inventory.warningQuantity,
+                            CreatedAt: result.inventory.createdAt,
+                            UpdatedAt: result.inventory.updatedAt
+                        },
+                        CreatedAt: result.createdAt,
+                        UpdatedAt: result.updatedAt
+                    })
+                );
             }
         });
     } catch (error) {
@@ -70,15 +100,6 @@ exports.createProduct = async (req, res, next) => {
     try {
         let createdProduct = await product.save();
 
-        let productFields = _.pick(createdProduct, [
-            '_id',
-            'createdAt',
-            'updatedAt',
-            'basePrice',
-            'description',
-            'sellingPrice'
-        ]);
-
         const inventory = new Inventory({
             _id: new mongoose.Types.ObjectId(),
             quantity,
@@ -88,16 +109,22 @@ exports.createProduct = async (req, res, next) => {
 
         let createdInventory = await inventory.save();
 
-        let quantityFields = _.pick(createdInventory, [
-            '_id',
-            'quantity',
-            'createdAt',
-            'updatedAt',
-            'warningQuantity'
-        ]);
-
         const response = {
-            content: { ...productFields, inventory: { ...quantityFields } },
+            content: {
+                Id: createdProduct._id,
+                Description: createdProduct.description,
+                BasePrice: createdProduct.basePrice,
+                SellingPrice: createdProduct.sellingPrice,
+                Inventory: {
+                    Id: createdInventory._id,
+                    Quantity: createdInventory.quantity,
+                    WarningQuantity: createdInventory.warningQuantity,
+                    CreatedAt: createdInventory.createdAt,
+                    UpdatedAt: createdInventory.updatedAt
+                },
+                CreatedAt: createdProduct.createdAt,
+                UpdatedAt: createdProduct.updatedAt
+            },
             message: 'Item successfully created.'
         };
 
@@ -125,14 +152,26 @@ exports.updateProduct = async (req, res, next) => {
             }
         ).exec();
 
-        let updatedProduct = await Product.findById(productId)
-            .select(
-                '_id basePrice description sellingPrice createdAt updatedAt'
-            )
-            .exec();
+        let updatedProduct = await Product.findById(productId).exec();
+
+        let inventory = await Inventory.findOne({ product: productId }).exec();
 
         const response = {
-            content: updatedProduct,
+            content: {
+                Id: updatedProduct._id,
+                BasePrice: updatedProduct.basePrice,
+                Description: updatedProduct.description,
+                SellingPrice: updatedProduct.sellingPrice,
+                Inventory: {
+                    Id: inventory._id,
+                    Quantity: inventory.quantity,
+                    WarningQuantity: inventory.warningQuantity,
+                    CreatedAt: inventory.createdAt,
+                    UpdatedAt: inventory.updatedAt
+                },
+                CreatedAt: updatedProduct.createdAt,
+                UpdatedAt: updatedProduct.updatedAt
+            },
             message: 'Item successfully updated.'
         };
 
@@ -147,24 +186,31 @@ exports.getProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
 
-        let product = await Product.findById(productId)
-            .select(
-                '_id basePrice description sellingPrice createdAt updatedAt'
-            )
-            .exec();
+        let product = await Product.findById(productId).exec();
 
         if (!product) {
             res.status(404).json({ message: 'Item not found.' });
         }
 
-        let inventory = await Inventory.findOne({ product: product._id })
-            .select('_id quantity warningQuantity createdAt updatedAt')
-            .exec();
+        let inventory = await Inventory.findOne({
+            product: product._id
+        }).exec();
 
         const response = {
             content: {
-                ...product.toObject(),
-                inventory: { ...inventory.toObject() }
+                Id: product._id,
+                BasePrice: product.basePrice,
+                Description: product.description,
+                SellingPrice: product.sellingPrice,
+                Inventory: {
+                    Id: inventory._id,
+                    Quantity: inventory.quantity,
+                    WarningQuantity: inventory.warningQuantity,
+                    CreatedAt: inventory.createdAt,
+                    UpdatedAt: inventory.updatedAt
+                },
+                CreatedAt: product.createdAt,
+                UpdatedAt: product.updatedAt
             },
             message: 'Item successfully fetched.'
         };
