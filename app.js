@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+const userRoutes = require('./routes/users');
 const productRoutes = require('./routes/products');
 const inventoryRoutes = require('./routes/inventory');
 const transactionRoutes = require('./routes/transactions');
@@ -15,6 +16,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.use('/users', userRoutes);
 app.use('/products', productRoutes);
 app.use('/inventory', inventoryRoutes);
 app.use('/transactions', transactionRoutes);
