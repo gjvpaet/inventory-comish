@@ -46,14 +46,14 @@ exports.login = async (req, res, next) => {
 
     try {
         let user = await User.findOne({ email: Email }).exec();
+        console.log('user: ', user);
 
         if (!user) {
-            res.status(401).json({ message: 'Log in failed.' });
+            return res.status(401).json({ message: 'Log in failed.' });
         }
         
         bcrypt.compare(Password, user.password, (err, result) => {
             if (err) {
-                console.log('fsdfs');
                 return res.status(401).json({ message: 'Log in failed.' });
             }
             
