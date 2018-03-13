@@ -25,7 +25,9 @@ exports.signup = async (req, res, next) => {
 
                         await user.save();
 
-                        res.status(201).json({ message: 'Successfully signed up.' });
+                        res
+                            .status(201)
+                            .json({ message: 'Successfully signed up.' });
                     } catch (error) {
                         console.log('error: ', error);
                         res.status(500).json({ error });
@@ -33,6 +35,34 @@ exports.signup = async (req, res, next) => {
                 }
             });
         }
+    } catch (error) {
+        console.log('error: ', error);
+        res.status(500).json({ error });
+    }
+};
+
+exports.login = async (req, res, next) => {
+    let { Email, Password } = req.body;
+
+    try {
+        let user = await User.findOne({ email: Email }).exec();
+
+        if (!user) {
+            res.status(401).json({ message: 'Log in failed.' });
+        }
+        
+        bcrypt.compare(Password, user.password, (err, result) => {
+            if (err) {
+                console.log('fsdfs');
+                return res.status(401).json({ message: 'Log in failed.' });
+            }
+            
+            if (result) {
+                return res.status(200).json({ message: 'Logged in successfully.' });
+            }
+            
+            res.json(401).json({ message: 'Log in failed.' });
+        });
     } catch (error) {
         console.log('error: ', error);
         res.status(500).json({ error });
