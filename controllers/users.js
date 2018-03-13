@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const User = require('../models/user');
@@ -46,21 +47,28 @@ exports.login = async (req, res, next) => {
 
     try {
         let user = await User.findOne({ email: Email }).exec();
-        console.log('user: ', user);
 
         if (!user) {
             return res.status(401).json({ message: 'Log in failed.' });
         }
-        
+
         bcrypt.compare(Password, user.password, (err, result) => {
             if (err) {
                 return res.status(401).json({ message: 'Log in failed.' });
             }
-            
+
             if (result) {
-                return res.status(200).json({ message: 'Logged in successfully.' });
+                let token = jwt.sign(
+                    { email: user.email, userId: user._id },
+                    process.env.JWT_KEY,
+                    { expiresIn: '1h' }
+                );
+
+                return res
+                    .status(200)
+                    .json({ token, message: 'Logged in successfully.' });
             }
-            
+
             res.json(401).json({ message: 'Log in failed.' });
         });
     } catch (error) {
