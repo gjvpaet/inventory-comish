@@ -4,6 +4,8 @@ const router = express.Router();
 
 const InventoryController = require('../controllers/inventory');
 
-router.put('/:inventoryId', InventoryController.modifyStock);
+const checkAuth = require('../middlewares/checkAuth');
+
+router.put('/:inventoryId', checkAuth, InventoryController.modifyStock);
 
 module.exports = router;
