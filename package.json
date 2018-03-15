@@ -4,7 +4,7 @@
   "description": "Inventory System",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server2.js"
   },
   "keywords": [
     "inventory"
