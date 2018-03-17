@@ -4,7 +4,9 @@
   "description": "Inventory System",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server2.js"
+    "dev": "node server.js",
+    "build": "next build ./src",
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [
     "inventory"

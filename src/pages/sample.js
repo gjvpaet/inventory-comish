@@ -1,7 +1,7 @@
 import React from 'react';
 
 const sample = props => (
-    <p>I love tris</p>
+    <p>i love tris</p>
 );
 
 export default sample;

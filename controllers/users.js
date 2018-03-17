@@ -4,18 +4,18 @@ const mongoose = require('mongoose');
 
 const User = require('../models/user');
 
-exports.signup = async (req, res, next) => {
+exports.signup = async (req, res) => {
     let { Email, Password } = req.body;
 
     try {
         let existingUser = await User.find({ email: Email }).exec();
-
+        
         if (existingUser.length) {
-            res.status(409).json({ message: 'Email already exist.' });
+            return res.status(409).json({ message: 'Email already exist.' });
         } else {
             bcrypt.hash(Password, 10, async (err, hash) => {
                 if (err) {
-                    res.status(500).json({ error: err });
+                    return res.status(500).json({ error: err });
                 } else {
                     try {
                         const user = new User({
@@ -26,19 +26,19 @@ exports.signup = async (req, res, next) => {
 
                         await user.save();
 
-                        res
+                        return res
                             .status(201)
                             .json({ message: 'Successfully signed up.' });
                     } catch (error) {
                         console.log('error: ', error);
-                        res.status(500).json({ error });
+                        return res.status(500).json({ error });
                     }
                 }
             });
         }
     } catch (error) {
         console.log('error: ', error);
-        res.status(500).json({ error });
+        return res.status(500).json({ error });
     }
 };
 
@@ -69,10 +69,10 @@ exports.login = async (req, res, next) => {
                     .json({ token, message: 'Logged in successfully.' });
             }
 
-            res.json(401).json({ message: 'Log in failed.' });
+            return res.json(401).json({ message: 'Log in failed.' });
         });
     } catch (error) {
         console.log('error: ', error);
-        res.status(500).json({ error });
+        return res.status(500).json({ error });
     }
 };

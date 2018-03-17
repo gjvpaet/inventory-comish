@@ -1,11 +1,61 @@
 require('dotenv').config();
-const http = require('http');
 
-const port = process.env.PORT || 8069;
+const next = require('next');
+const morgan = require('morgan');
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 
-const app = require('./app');
+const dev = process.env.NODE_ENV !== 'production';
+const app = next({ dev, dir: './src' });
+const handle = app.getRequestHandler();
 
-const server = http.createServer(app);
+app
+    .prepare()
+    .then(() => {
+        const server = express();
 
-server.listen(port);
-console.log(`Listening to ${port}`);
+        const userRoutes = require('./routes/users');
+        const productRoutes = require('./routes/products');
+        const inventoryRoutes = require('./routes/inventory');
+        const transactionRoutes = require('./routes/transactions');
+
+        mongoose.connect('mongodb://127.0.0.1/inventory');
+
+        server.use(morgan('dev'));
+        server.use(bodyParser.urlencoded({ extended: false }));
+        server.use(bodyParser.json());
+
+        server.use('/api/users', userRoutes);
+        server.use('/products', productRoutes);
+        server.use('/inventory', inventoryRoutes);
+        server.use('/transactions', transactionRoutes);
+
+        server.get('*', (req, res) => {
+            return handle(req, res);
+        });
+
+        server.use((req, res, next) => {
+            const error = new Error('Not found');
+
+            error.status = 404;
+            next(error);
+        });
+
+        server.use((error, req, res, next) => {
+            res.status(error.status || 500).json({
+                error: {
+                    message: error.message
+                }
+            });
+        });
+
+        server.listen(3000, err => {
+            if (err) throw err;
+            console.log('> Ready on http://localhost:3000');
+        });
+    })
+    .catch(ex => {
+        console.error(ex.stack);
+        process.exit(1);
+    });
