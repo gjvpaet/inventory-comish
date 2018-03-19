@@ -4,7 +4,7 @@
   "description": "Inventory System",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --watch --progress && nodemon server.js"
+    "dev": "webpack --watch --progress & nodemon server.js"
   },
   "keywords": [
     "inventory"
@@ -28,8 +28,11 @@
     "now-ui-dashboard": "^1.0.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
-    "react-router-dom": "^4.2.2"
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.2"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -44,6 +47,6 @@
     "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.11",
     "style-loader": "^0.20.3",
-    "webpack": "^4.1.1"
+    "webpack": "^3.10.0"
   }
 }

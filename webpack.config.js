@@ -33,7 +33,7 @@ module.exports = {
     },
     output: {
         path: `${__dirname}/public`,
-        filename: [name].min.js
+        filename: '[name].min.js'
     },
     plugins: debug
         ? []
