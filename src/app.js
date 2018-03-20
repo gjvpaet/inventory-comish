@@ -11,7 +11,7 @@ const history = createHistory();
 const middleware = routerMiddleware(history);
 const store = configureStore(middleware);
 
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/Dashboard/index.jsx';
 
 render(
     <Provider store={store}>
