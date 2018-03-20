@@ -5,11 +5,6 @@ class Dashboard extends Component {
         console.log('shit');
     }
 
-    componentDidCatch(error, info) {
-        console.log('info: ', info);
-        console.log('error: ', error);
-    }
-
     render() {
         return <p>I love tris</p>
     }
