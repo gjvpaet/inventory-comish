@@ -34,14 +34,24 @@ const navbar = props => (
             >
                 <ul className="navbar-nav">
                     <li className="nav-item dropdown">
-                        <a href="#" className="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i className="now-ui-icons users_circle-08"></i>
-                            <p>
-                                User Name
-                            </p>
+                        <a
+                            href="#"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            data-toggle="dropdown"
+                            id="navbarDropdownMenuLink"
+                            className="nav-link dropdown-toggle"
+                        >
+                            <i className="now-ui-icons users_circle-08" />
+                            <p>User Name</p>
                         </a>
-                        <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                            <a href="#" className="dropdown-item">Log Out</a>
+                        <div
+                            className="dropdown-menu dropdown-menu-right"
+                            aria-labelledby="navbarDropdownMenuLink"
+                        >
+                            <a href="#" className="dropdown-item">
+                                Log Out
+                            </a>
                         </div>
                     </li>
                 </ul>
