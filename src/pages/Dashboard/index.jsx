@@ -7,10 +7,8 @@ class Dashboard extends Component {
 
     render() {
         return (
-            <Layout>
-                <div className="content">
-                    <p>I love you triz!</p>
-                </div>
+            <Layout title="Dashboard">
+                <p>I love you triz!</p>
             </Layout>
         );
     }

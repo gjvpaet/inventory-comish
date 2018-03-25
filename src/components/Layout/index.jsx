@@ -7,8 +7,8 @@ const layout = props => (
     <Fragment>
         <Sidebar />
         <div className="main-panel">
-            <Navbar />
-            {props.children}
+            <Navbar title={props.title} />
+            <div className="content">{props.children}</div>
         </div>
     </Fragment>
 );

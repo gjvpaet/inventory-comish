@@ -11,6 +11,7 @@ const history = createHistory();
 const middleware = routerMiddleware(history);
 const store = configureStore(middleware);
 
+import Products from './pages/Products/index.jsx';
 import Dashboard from './pages/Dashboard/index.jsx';
 
 render(
@@ -18,6 +19,7 @@ render(
         <ConnectedRouter history={history}>
             <Switch>
                 <Route path="/dashboard" component={Dashboard} />
+                <Route path="/product-page" component={Products} />
             </Switch>
         </ConnectedRouter>
     </Provider>,

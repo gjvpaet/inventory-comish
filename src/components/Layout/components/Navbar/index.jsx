@@ -12,7 +12,7 @@ const navbar = props => (
                     </button>
                 </div>
                 <a className="navbar-brand" href="#">
-                    Dashboard
+                    {props.title}
                 </a>
             </div>
             <button
