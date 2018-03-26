@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
+const config = require('./config');
+
 const app = express();
 
 const userRoutes = require('./routes/users');
@@ -23,10 +25,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/node_modules', express.static(path.join(__dirname, 'node_modules')));
 
-app.use('/users', userRoutes);
-app.use('/products', productRoutes);
-app.use('/inventory', inventoryRoutes);
-app.use('/transactions', transactionRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/transactions', transactionRoutes);
+
+app.locals.siteUrl = config.siteUrl;
 
 app.get('*', (req, res, next) => {
     res.render('index', { title: 'Inventory' });
