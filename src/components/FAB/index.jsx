@@ -10,6 +10,7 @@ const fab = props => (
         />
         <ChildButton
             label="Add Product"
+            onClick={props.onClick}
             style={{ color: 'white' }}
             icon="now-ui-icons ui-1_simple-add"
         />

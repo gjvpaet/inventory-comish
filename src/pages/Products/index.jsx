@@ -32,7 +32,7 @@ class Products extends Component {
                 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMzI5ODYyLCJleHAiOjE1MjIzMzM0NjJ9.kcOviFGWIdBo_sI8FWQzcwbWkLsN0HxnrrHKuhB_sIg',
                 'products'
             );
-            console.log('result: ', result);
+
             fetchProducts(result.list);
         } catch (error) {
             console.log('error: ', error);
@@ -77,7 +77,6 @@ class Products extends Component {
 
     render() {
         let { data } = this.props;
-        console.log('data: ', data);
         let columns = this.getColums();
 
         return (
@@ -92,7 +91,7 @@ class Products extends Component {
                             className="-striped -highlight"
                         />
                     </Card>
-                    <FAB />
+                    <FAB onClick={() => alertify.notify('I love triz', 'success', 5)} />
                 </div>
             </Layout>
         );

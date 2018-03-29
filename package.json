@@ -29,6 +29,7 @@
     "mongoose": "^5.0.7",
     "morgan": "^1.9.0",
     "now-ui-dashboard": "^1.0.1",
+    "parsleyjs": "^2.8.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-mfb": "^0.6.0",
