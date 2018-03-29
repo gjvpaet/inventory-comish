@@ -16,7 +16,7 @@ class Products extends Component {
         let { fetchProducts } = this.props;
 
         try {
-            let result = await httpService.getAllData('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMDYzNDI5LCJleHAiOjE1MjIwNjcwMjl9.g23tHa5WqLY3csoomCLYNx7OYpb3EY0ZQTKBw2XrKgQ', 'products');
+            let result = await httpService.getAllData('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMjk3NzI3LCJleHAiOjE1MjIzMDEzMjd9.PVd6ciiIXWrKZoIxUGnlySmr8qpR_yGC3Qq0t2filOE', 'products');
             console.log('result: ', result);
         } catch (error) {
             console.log('error: ', error);
