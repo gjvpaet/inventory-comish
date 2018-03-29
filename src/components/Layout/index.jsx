@@ -8,7 +8,10 @@ const layout = props => (
         <Sidebar />
         <div className="main-panel">
             <Navbar title={props.title} />
-            <div className="content">{props.children}</div>
+            <div class="panel-header panel-header-sm"></div>
+            <div className="content">
+                <div className="row">{props.children}</div>
+            </div>
         </div>
     </Fragment>
 );

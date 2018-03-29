@@ -1,7 +1,7 @@
 import React from 'react';
 
 const navbar = props => (
-    <nav className="navbar navbar-expand-lg navbar-absolute bg-primary fixed-top">
+    <nav className="navbar navbar-expand-lg navbar-transparent navbar-absolute bg-primary fixed-top">
         <div className="container-fluid">
             <div className="navbar-wrapper">
                 <div className="navbar-toggle">

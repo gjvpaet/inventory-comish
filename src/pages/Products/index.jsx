@@ -28,7 +28,7 @@ class Products extends Component {
 
         try {
             let result = await httpService.getAllData(
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMzIxNTc3LCJleHAiOjE1MjIzMjUxNzd9.rPzuT2LpKfSUU4WyOhbFsxqnSTgJBtXoHxdVNVxicrE',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMzI2MDI2LCJleHAiOjE1MjIzMjk2MjZ9.woImsYnRFeJkyJ3cjk7zmFFucSoBvaNr6W12edoX1ps',
                 'products'
             );
             console.log('result: ', result);
@@ -81,24 +81,35 @@ class Products extends Component {
 
         return (
             <Layout title="Products">
-                <ReactTable
-                    filterable
-                    data={data}
-                    columns={columns}
-                    defaultPageSize={10}
-                />
-                <Menu effect="slidein-spring" method="click" position="br">
-                    <MainButton
-                        style={{ color: 'white' }}
-                        iconActive="now-ui-icons ui-1_simple-remove"
-                        iconResting="now-ui-icons design_bullet-list-67"
-                    />
-                    <ChildButton
-                        label="Add Product"
-                        style={{ color: 'white' }}
-                        icon="now-ui-icons ui-1_simple-add"
-                    />
-                </Menu>
+                <div className="col-md-12">
+                    <div className="card">
+                        <div className="card-header">
+                            <h4 className="card-title">Products Table</h4>
+                        </div>
+                        <div className="card-body">
+                            <ReactTable
+                                filterable
+                                data={data}
+                                style={{ zIndex: 10 }}
+                                columns={columns}
+                                defaultPageSize={10}
+                                className="-striped -highlight"
+                            />
+                        </div>
+                    </div>
+                    <Menu effect="slidein-spring" method="click" position="br">
+                        <MainButton
+                            style={{ color: 'white' }}
+                            iconActive="now-ui-icons ui-1_simple-remove"
+                            iconResting="now-ui-icons design_bullet-list-67"
+                        />
+                        <ChildButton
+                            label="Add Product"
+                            style={{ color: 'white' }}
+                            icon="now-ui-icons ui-1_simple-add"
+                        />
+                    </Menu>
+                </div>
             </Layout>
         );
     }
