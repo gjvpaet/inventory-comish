@@ -7,6 +7,7 @@ import actions from '../../store/actions';
 
 import FAB from '../../components/FAB/index.jsx';
 import Card from '../../components/Card/index.jsx';
+import Modal from '../../components/Modal/index.jsx';
 import Layout from '../../components/Layout/index.jsx';
 
 import HttpService from '../../services/HttpService';
@@ -29,7 +30,7 @@ class Products extends Component {
 
         try {
             let result = await httpService.getAllData(
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMzI5ODYyLCJleHAiOjE1MjIzMzM0NjJ9.kcOviFGWIdBo_sI8FWQzcwbWkLsN0HxnrrHKuhB_sIg',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMzM4Nzc4LCJleHAiOjE1MjIzNDIzNzh9.O-0HeyIl3KWLAK4XuP3i8BBLEuzAOZjJeuvjHYlJQXI',
                 'products'
             );
 
@@ -91,8 +92,9 @@ class Products extends Component {
                             className="-striped -highlight"
                         />
                     </Card>
-                    <FAB onClick={() => alertify.notify('I love triz', 'success', 5)} />
+                    <FAB onClick={() => $('#products-modal').modal('show')} />
                 </div>
+                <Modal modalTitle="Add New Product" modalId="products-modal" />
             </Layout>
         );
     }
