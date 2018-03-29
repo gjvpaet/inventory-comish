@@ -12,6 +12,7 @@
   "author": "Gabriel Joshua Paet",
   "license": "ISC",
   "dependencies": {
+    "alertifyjs": "^1.11.1",
     "await-to-js": "^2.0.1",
     "axios": "^0.18.0",
     "bcrypt": "^1.0.3",
