@@ -1,3 +1,4 @@
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 
 import Modal from '../../../../components/Modal/index.jsx';

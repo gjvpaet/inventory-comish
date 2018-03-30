@@ -31,7 +31,7 @@ class Products extends Component {
 
         try {
             let result = await httpService.getAllData(
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyMzg2Mzc5LCJleHAiOjE1MjIzODk5Nzl9.rN4lHXGK-vzCJrj45TX39lbsVau2qQqRRfdlzxJYJ-A',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyNDA3NTU0LCJleHAiOjE1MjI0MTExNTR9.nYxZmoAuSP0Zo4QzyVfvoixapx_Kjv8sZ810ggL2E2E',
                 'products'
             );
 
