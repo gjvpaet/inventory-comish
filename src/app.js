@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import createHistory from 'history/createBrowserHistory';
-import { ConnectedRouter, routerMiddleware, push } from 'react-router-redux';
+import { ConnectedRouter, routerMiddleware } from 'react-router-redux';
 
 import configureStore from './store/configureStore';
 
@@ -19,7 +19,7 @@ render(
         <ConnectedRouter history={history}>
             <Switch>
                 <Route path="/dashboard" component={Dashboard} />
-                <Route path="/product-page" component={Products} />
+                <Route path="/products" component={Products} />
             </Switch>
         </ConnectedRouter>
     </Provider>,

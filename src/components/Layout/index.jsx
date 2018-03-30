@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 
 import Navbar from './components/Navbar/index.jsx';
-import Sidebar from './components/Sidebar/index.jsx';
+
+import Sidebar from './containers/Sidebar/index.jsx';
 
 const layout = props => (
     <Fragment>
