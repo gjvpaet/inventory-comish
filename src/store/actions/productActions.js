@@ -1,8 +1,15 @@
-import { FETCH_PRODUCTS } from './actionTypes';
+import { FETCH_PRODUCTS, MODIFY_PRODUCT } from './actionTypes';
 
 export const fetchProducts = payload => {
     return {
-        type: FETCH_PRODUCTS,
-        payload
+        payload,
+        type: FETCH_PRODUCTS
     };
+};
+
+export const modifyProduct = payload => {
+    return {
+        payload,
+        type: MODIFY_PRODUCT
+    }
 };

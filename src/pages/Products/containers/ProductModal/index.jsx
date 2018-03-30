@@ -3,8 +3,12 @@ import React, { Component } from 'react';
 
 import Modal from '../../../../components/Modal/index.jsx';
 
+import SelectedProductSelector from '../../../../store/selectors/selectedProduct';
+
 class ProductModal extends Component {
     render() {
+        console.log(this.props.selected);
+        console.log(this.props.product);
         return (
             <Modal modalTitle="Add New Product" modalId="products-modal">
                 <form>
@@ -95,4 +99,11 @@ class ProductModal extends Component {
     }
 }
 
-export default ProductModal;
+const mapStateToProps = state => {
+    return {
+        selected: state.products.selected,
+        product: SelectedProductSelector(state)
+    };
+};
+
+export default connect(mapStateToProps)(ProductModal);

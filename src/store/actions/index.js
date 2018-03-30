@@ -1,5 +1,1 @@
-import * as products from './productActions';
-
-export default {
-    ...products
-};
+export * from './productActions';

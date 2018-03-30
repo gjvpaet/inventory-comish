@@ -2,8 +2,9 @@ import { values } from 'lodash';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { SemipolarSpinner } from 'react-epic-spinners';
 
-import actions from '../../store/actions';
+import { fetchProducts, modifyProduct } from '../../store/actions';
 
 import ProductModal from './containers/ProductModal/index.jsx';
 
@@ -31,7 +32,7 @@ class Products extends Component {
 
         try {
             let result = await httpService.getAllData(
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyNDA3NTU0LCJleHAiOjE1MjI0MTExNTR9.nYxZmoAuSP0Zo4QzyVfvoixapx_Kjv8sZ810ggL2E2E',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyNDI1NDkwLCJleHAiOjE1MjI0MjkwOTB9.qcszHmTxCbMmrAi2tazU_XqCUye0DPbrJuvPvh7PX90',
                 'products'
             );
 
@@ -77,9 +78,14 @@ class Products extends Component {
         ];
     }
 
+    modifyProduct(id) {
+        this.props.modifyProduct(id);
+        $('#products-modal').modal('show');
+    }
+
     render() {
-        let { data } = this.props;
         let columns = this.getColums();
+        let { data, fetchLoading } = this.props;
 
         return (
             <Layout title="Products">
@@ -90,10 +96,19 @@ class Products extends Component {
                             data={data}
                             columns={columns}
                             defaultPageSize={10}
+                            loading={fetchLoading}
                             className="-striped -highlight"
+                            loadingText={
+                                <div style={{ display: 'inline-block' }}>
+                                    <SemipolarSpinner
+                                        color="black"
+                                        size={100}
+                                    />
+                                </div>
+                            }
                         />
                     </Card>
-                    <FAB onClick={() => $('#products-modal').modal('show')} />
+                    <FAB onClick={() => this.modifyProduct('')} />
                 </div>
                 <ProductModal />
             </Layout>
@@ -103,13 +118,15 @@ class Products extends Component {
 
 const mapStateToProps = state => {
     return {
-        data: values(state.products.data)
+        data: values(state.products.data),
+        fetchLoading: state.products.fetchLoading
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchProducts: data => dispatch(actions.fetchProducts(data))
+        modifyProduct: id => dispatch(modifyProduct(id)),
+        fetchProducts: data => dispatch(fetchProducts(data))
     };
 };
 
