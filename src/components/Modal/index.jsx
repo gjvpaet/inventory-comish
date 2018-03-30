@@ -27,11 +27,11 @@ const modal = props => (
                     <button
                         type="button"
                         data-dismiss="modal"
-                        className="btn btn-default"
+                        className="btn btn-default btn-round"
                     >
                         Close
                     </button>
-                    <button type="submit" className="btn btn-primary">Save</button>
+                    <button type="submit" className="btn btn-primary btn-round">Save</button>
                 </div>
             </div>
         </div>
