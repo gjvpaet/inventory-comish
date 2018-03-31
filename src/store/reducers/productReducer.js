@@ -1,6 +1,10 @@
 import { keyBy } from 'lodash';
 
-import { FETCH_PRODUCTS, MODIFY_PRODUCT } from '../actions/actionTypes';
+import {
+    SET_PRODUCT,
+    FETCH_PRODUCTS,
+    SET_SELECTED_PRODUCT
+} from '../actions/actionTypes';
 
 let initialState = {
     data: {},
@@ -20,8 +24,20 @@ const productReducer = (state = initialState, action) => {
                 data: keyBy(action.payload, 'Id')
             };
             break;
-        case MODIFY_PRODUCT:
-            return { ...state, selected: action.payload };
+        case SET_PRODUCT:
+            return { ...state, ...action.payload };
+            break;
+        case SET_SELECTED_PRODUCT:
+            let selected = state.selected ? { ...state.selected } : {};
+
+            return {
+                ...state,
+                selected: {
+                    ...selected,
+                    [action.payload.field]: action.payload.value
+                }
+            };
+            break;
         default:
             return state;
             break;

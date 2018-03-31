@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { SemipolarSpinner } from 'react-epic-spinners';
 
-import { fetchProducts, modifyProduct } from '../../store/actions';
+import { setProduct, fetchProducts } from '../../store/actions';
 
 import ProductModal from './containers/ProductModal/index.jsx';
 
@@ -20,7 +20,9 @@ class Products extends Component {
     constructor(props) {
         super(props);
 
-        ['getProducts'].map(fn => (this[fn] = this[fn].bind(this)));
+        ['addProduct', 'getProducts'].map(
+            fn => (this[fn] = this[fn].bind(this))
+        );
     }
 
     async componentDidMount() {
@@ -32,7 +34,7 @@ class Products extends Component {
 
         try {
             let result = await httpService.getAllData(
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyNDI1NDkwLCJleHAiOjE1MjI0MjkwOTB9.qcszHmTxCbMmrAi2tazU_XqCUye0DPbrJuvPvh7PX90',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyNTA2Njg3LCJleHAiOjE1MjI1MTAyODd9.5fiS-6LmrllVDKxPXE3LKtH40Kll_CHKuvLwQHA8Dt8',
                 'products'
             );
 
@@ -78,9 +80,10 @@ class Products extends Component {
         ];
     }
 
-    modifyProduct(id) {
-        this.props.modifyProduct(id);
+    addProduct(event) {
+        this.props.setProduct({ formAction: 'POST' });
         $('#products-modal').modal('show');
+        $('#product-form').validator();
     }
 
     render() {
@@ -108,7 +111,7 @@ class Products extends Component {
                             }
                         />
                     </Card>
-                    <FAB onClick={() => this.modifyProduct('')} />
+                    <FAB onClick={this.addProduct} />
                 </div>
                 <ProductModal />
             </Layout>
@@ -125,7 +128,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        modifyProduct: id => dispatch(modifyProduct(id)),
+        setProduct: data => dispatch(setProduct(data)),
         fetchProducts: data => dispatch(fetchProducts(data))
     };
 };

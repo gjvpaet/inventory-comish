@@ -22,17 +22,7 @@ const modal = props => (
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div className="modal-body">{props.children}</div>
-                <div className="modal-footer d-flex justify-content-between">
-                    <button
-                        type="button"
-                        data-dismiss="modal"
-                        className="btn btn-default btn-round"
-                    >
-                        Close
-                    </button>
-                    <button type="submit" className="btn btn-primary btn-round">Save</button>
-                </div>
+                <form id={props.formId}>{props.children}</form>
             </div>
         </div>
     </div>

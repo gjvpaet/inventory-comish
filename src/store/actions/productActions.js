@@ -1,4 +1,9 @@
-import { FETCH_PRODUCTS, MODIFY_PRODUCT } from './actionTypes';
+import {
+    SET_PRODUCT,
+    FETCH_PRODUCTS,
+    MODIFY_PRODUCT,
+    SET_SELECTED_PRODUCT
+} from './actionTypes';
 
 export const fetchProducts = payload => {
     return {
@@ -7,9 +12,16 @@ export const fetchProducts = payload => {
     };
 };
 
-export const modifyProduct = payload => {
+export const setSelectedProduct = payload => {
     return {
         payload,
-        type: MODIFY_PRODUCT
-    }
+        type: SET_SELECTED_PRODUCT
+    };
+};
+
+export const setProduct = payload => {
+    return {
+        payload,
+        type: SET_PRODUCT
+    };
 };
