@@ -30,6 +30,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/transactions', transactionRoutes);
 
+app.locals.token = config.token;
 app.locals.siteUrl = config.siteUrl;
 
 app.get('*', (req, res, next) => {

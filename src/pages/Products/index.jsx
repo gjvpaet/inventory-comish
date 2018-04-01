@@ -33,10 +33,7 @@ class Products extends Component {
         let { fetchProducts } = this.props;
 
         try {
-            let result = await httpService.getAllData(
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdqdnBhZXRAZ21haWwuY29tIiwidXNlcklkIjoiNWFhYzViNTdmN2M3ZDY3OTdmZjUwZGI4IiwiaWF0IjoxNTIyNTA2Njg3LCJleHAiOjE1MjI1MTAyODd9.5fiS-6LmrllVDKxPXE3LKtH40Kll_CHKuvLwQHA8Dt8',
-                'products'
-            );
+            let result = await httpService.getAllData(token, 'products');
 
             fetchProducts(result.list);
         } catch (error) {

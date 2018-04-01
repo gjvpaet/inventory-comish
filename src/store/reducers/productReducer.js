@@ -2,6 +2,7 @@ import { keyBy } from 'lodash';
 
 import {
     SET_PRODUCT,
+    ADD_PRODUCT,
     FETCH_PRODUCTS,
     SET_SELECTED_PRODUCT
 } from '../actions/actionTypes';
@@ -26,6 +27,12 @@ const productReducer = (state = initialState, action) => {
             break;
         case SET_PRODUCT:
             return { ...state, ...action.payload };
+            break;
+        case ADD_PRODUCT:
+            return {
+                ...state,
+                data: { ...state.data, [action.payload.Id]: action.payload }
+            };
             break;
         case SET_SELECTED_PRODUCT:
             let selected = state.selected ? { ...state.selected } : {};

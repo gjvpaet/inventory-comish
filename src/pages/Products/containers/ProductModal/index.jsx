@@ -1,27 +1,84 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
+import { HalfCircleSpinner } from 'react-epic-spinners';
 
-import { setSelectedProduct } from '../../../../store/actions';
+import {
+    setProduct,
+    addProduct,
+    setSelectedProduct
+} from '../../../../store/actions';
 
 import Modal from '../../../../components/Modal/index.jsx';
 
+import config from '../../../../../config';
+
+import HttpService from '../../../../services/HttpService';
+
+const httpService = new HttpService();
+
 class ProductModal extends Component {
-    constructor(props) {
-        super(props);
-
-        // ['handleSubmit'].map(fn => (this[fn] = this[fn].bind(this)));
-    }
-
     componentDidMount() {
         $('#product-form')
             .validator(this.props.selected ? 'validate' : 'update')
-            .on('submit', e => {
-                console.log('tangina mo teejay');
-            });
+            .on('submit', e => this.submit(e));
     }
 
     handleChange(field, value) {
         this.props.setSelectedProduct({ field, value });
+    }
+
+    async submit(e) {
+        e.preventDefault();
+
+        let { formAction, selected, addProduct, setProduct } = this.props;
+        let {
+            Id = '',
+            Quantity = '',
+            BasePrice = '',
+            Description = '',
+            SellingPrice = '',
+            WarningQuantity = ''
+        } = selected || {};
+
+        setProduct({ formLoading: true });
+
+        let data = {
+            Quantity,
+            BasePrice,
+            Description,
+            SellingPrice,
+            WarningQuantity
+        };
+
+        switch (formAction) {
+            case 'POST':
+                try {
+                    let result = await httpService.inserData(
+                        token,
+                        data,
+                        'products'
+                    );
+
+                    addProduct(result.content);
+                    setProduct({ formLoading: false });
+
+                    alertify.success(result.message);
+
+                    $('#product-form')
+                        .find(':reset')
+                        .click();
+                        
+                    $('#products-modal').modal('hide');
+                } catch (error) {
+                    console.log('error: ', error);
+                    alertify.error(error);
+                }
+                break;
+            case 'PUT':
+                data = { ...data, Id };
+            default:
+                break;
+        }
     }
 
     render() {
@@ -34,11 +91,14 @@ class ProductModal extends Component {
             Description = '',
             SellingPrice = 0,
             WarningQuantity = 0
-        } =
-            selected || {};
+        } = selected || {};
 
         return (
-            <Modal modalTitle="Add New Product" modalId="products-modal" formId="product-form">
+            <Modal
+                formId="product-form"
+                modalId="products-modal"
+                modalTitle="Add New Product"
+            >
                 <div className="modal-body">
                     <div className="row">
                         <div className="col-md-12 col-sm-12 col-xs-12">
@@ -171,8 +231,13 @@ class ProductModal extends Component {
                         Close
                     </button>
                     <button type="submit" className="btn btn-primary btn-round">
-                        Save
+                        {formLoading ? (
+                            <HalfCircleSpinner size={20} color="black" />
+                        ) : (
+                            'Save'
+                        )}
                     </button>
+                    <button type="reset" className="d-none" />
                 </div>
             </Modal>
         );
@@ -189,6 +254,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        addProduct: data => dispatch(addProduct(data)),
+        setProduct: data => dispatch(setProduct(data)),
         setSelectedProduct: data => dispatch(setSelectedProduct(data))
     };
 };
