@@ -17,6 +17,12 @@ import HttpService from '../../../../services/HttpService';
 const httpService = new HttpService();
 
 class ProductModal extends Component {
+    constructor(props) {
+        super(props);
+
+        this.closeModal = this.closeModal.bind(this);
+    }
+
     componentDidMount() {
         $('#product-form')
             .validator(this.props.selected ? 'validate' : 'update')
@@ -67,7 +73,7 @@ class ProductModal extends Component {
                     $('#product-form')
                         .find(':reset')
                         .click();
-                        
+
                     $('#products-modal').modal('hide');
                 } catch (error) {
                     console.log('error: ', error);
@@ -79,6 +85,10 @@ class ProductModal extends Component {
             default:
                 break;
         }
+    }
+
+    closeModal() {
+        this.props.setProduct({ formAction: 'POST', selected: null });
     }
 
     render() {
@@ -93,11 +103,90 @@ class ProductModal extends Component {
             WarningQuantity = 0
         } = selected || {};
 
+        let inventoryFields =
+            formAction === 'PUT' ? (
+                <div className="row">
+                    <div className="col-md-12 col-sm-12 col-xs-12">
+                        <div className="form-group has-feedback">
+                            <label htmlFor="WarningQuantity">
+                                Warning Quantity{' '}
+                                <i className="fa fa-asterisk text-danger" />
+                            </label>
+                            <input
+                                required
+                                type="number"
+                                id="WarningQuantity"
+                                name="WarningQuantity"
+                                value={WarningQuantity}
+                                className="form-control"
+                                placeholder="Enter Warning Quantity"
+                                onChange={e =>
+                                    this.handleChange(
+                                        'WarningQuantity',
+                                        e.target.value
+                                    )
+                                }
+                            />
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="row">
+                    <div className="col-md-6 col-sm-6 col-xs-12">
+                        <div className="form-group has-feedback">
+                            <label htmlFor="Quantity">
+                                Quantity{' '}
+                                <i className="fa fa-asterisk text-danger" />
+                            </label>
+                            <input
+                                required
+                                id="Quantity"
+                                type="number"
+                                name="Quantity"
+                                value={Quantity}
+                                className="form-control"
+                                placeholder="Enter Quantity"
+                                onChange={e =>
+                                    this.handleChange(
+                                        'Quantity',
+                                        e.target.value
+                                    )
+                                }
+                            />
+                        </div>
+                    </div>
+                    <div className="col-md-6 col-sm-6 col-xs-12">
+                        <div className="form-group has-feedback">
+                            <label htmlFor="WarningQuantity">
+                                Warning Quantity{' '}
+                                <i className="fa fa-asterisk text-danger" />
+                            </label>
+                            <input
+                                required
+                                type="number"
+                                id="WarningQuantity"
+                                name="WarningQuantity"
+                                value={WarningQuantity}
+                                className="form-control"
+                                placeholder="Enter Warning Quantity"
+                                onChange={e =>
+                                    this.handleChange(
+                                        'WarningQuantity',
+                                        e.target.value
+                                    )
+                                }
+                            />
+                        </div>
+                    </div>
+                </div>
+            );
+
         return (
             <Modal
                 formId="product-form"
                 modalId="products-modal"
                 modalTitle="Add New Product"
+                closeModal={this.closeModal}
             >
                 <div className="modal-body">
                     <div className="row">
@@ -125,6 +214,7 @@ class ProductModal extends Component {
                             </div>
                         </div>
                     </div>
+                    {inventoryFields}
                     <div className="row">
                         <div className="col-md-6 col-sm-6 col-xs-12">
                             <div className="form-group has-feedback">
@@ -173,59 +263,12 @@ class ProductModal extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-md-6 col-sm-6 col-xs-12">
-                            <div className="form-group has-feedback">
-                                <label htmlFor="Quantity">
-                                    Quantity{' '}
-                                    <i className="fa fa-asterisk text-danger" />
-                                </label>
-                                <input
-                                    required
-                                    id="Quantity"
-                                    type="number"
-                                    name="Quantity"
-                                    value={Quantity}
-                                    className="form-control"
-                                    placeholder="Enter Quantity"
-                                    onChange={e =>
-                                        this.handleChange(
-                                            'Quantity',
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-6 col-sm-6 col-xs-12">
-                            <div className="form-group has-feedback">
-                                <label htmlFor="WarningQuantity">
-                                    Warning Quantity{' '}
-                                    <i className="fa fa-asterisk text-danger" />
-                                </label>
-                                <input
-                                    required
-                                    type="number"
-                                    id="WarningQuantity"
-                                    name="WarningQuantity"
-                                    value={WarningQuantity}
-                                    className="form-control"
-                                    placeholder="Enter Warning Quantity"
-                                    onChange={e =>
-                                        this.handleChange(
-                                            'WarningQuantity',
-                                            e.target.value
-                                        )
-                                    }
-                                />
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div className="modal-footer d-flex justify-content-between">
                     <button
                         type="button"
                         data-dismiss="modal"
+                        onClick={this.closeModal}
                         className="btn btn-default btn-round"
                     >
                         Close

@@ -18,6 +18,7 @@ const modal = props => (
                         className="close"
                         aria-label="Close"
                         data-dismiss="modal"
+                        onClick={props.closeModal}
                     >
                         <span aria-hidden="true">&times;</span>
                     </button>

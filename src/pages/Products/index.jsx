@@ -81,7 +81,12 @@ class Products extends Component {
                                 position="left"
                                 animation="scale"
                             >
-                                <button className="btn btn-primary btn-fab btn-icon btn-round">
+                                <button
+                                    className="btn btn-primary btn-fab btn-icon btn-round"
+                                    onClick={e =>
+                                        this.editProduct(e, props.original)
+                                    }
+                                >
                                     <i className="now-ui-icons design-2_ruler-pencil" />
                                 </button>
                             </Tooltip>
@@ -105,6 +110,19 @@ class Products extends Component {
 
     addProduct(event) {
         this.props.setProduct({ formAction: 'POST' });
+        $('#products-modal').modal('show');
+        $('#product-form').validator();
+    }
+
+    editProduct(event, product) {
+        this.props.setProduct({ 
+            formAction: 'PUT', 
+            selected:  {
+                ...product,
+                WarningQuantity: product.Inventory.WarningQuantity
+            }
+        });
+
         $('#products-modal').modal('show');
         $('#product-form').validator();
     }
