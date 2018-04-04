@@ -1,6 +1,7 @@
 import { values } from 'lodash';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
+import { Tooltip } from 'react-tippy';
 import React, { Component } from 'react';
 import { SemipolarSpinner } from 'react-epic-spinners';
 
@@ -72,6 +73,31 @@ class Products extends Component {
             },
             {
                 Header: 'Actions',
+                Cell: props => {
+                    return (
+                        <div className="text-center">
+                            <Tooltip
+                                title="Edit"
+                                position="left"
+                                animation="scale"
+                            >
+                                <button className="btn btn-primary btn-fab btn-icon btn-round">
+                                    <i className="now-ui-icons design-2_ruler-pencil" />
+                                </button>
+                            </Tooltip>
+                            &nbsp;
+                            <Tooltip
+                                title="Delete"
+                                position="bottom"
+                                animation="scale"
+                            >
+                                <button className="btn btn-danger btn-fab btn-icon btn-round">
+                                    <i className="now-ui-icons ui-1_simple-remove" />
+                                </button>
+                            </Tooltip>
+                        </div>
+                    );
+                },
                 Filter: () => {}
             }
         ];
