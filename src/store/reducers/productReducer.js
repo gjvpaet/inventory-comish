@@ -4,6 +4,7 @@ import {
     SET_PRODUCT,
     ADD_PRODUCT,
     FETCH_PRODUCTS,
+    UPDATE_PRODUCT,
     SET_SELECTED_PRODUCT
 } from '../actions/actionTypes';
 
@@ -31,7 +32,21 @@ const productReducer = (state = initialState, action) => {
         case ADD_PRODUCT:
             return {
                 ...state,
-                data: { ...state.data, [action.payload.Id]: action.payload }
+                data: { 
+                    [action.payload.Id]: action.payload, 
+                    ...state.data
+                },
+                selected: null
+            };
+            break;
+        case UPDATE_PRODUCT:
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    [action.payload.Id]: action.payload
+                },
+                selected: null
             };
             break;
         case SET_SELECTED_PRODUCT:

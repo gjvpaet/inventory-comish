@@ -25,11 +25,26 @@ class HttpService {
             let result = await axios.post(url, data, {
                 headers: { Authorization: token }
             });
-            console.log(result.data);
+            
             return result.data;
         } catch (error) {
             console.log('error: ', error);
             throw err;
+        }
+    }
+
+    async updateData(token, data, id, entity) {
+        let url = `${siteUrl}api/${entity}/${id}`;
+
+        try {
+            let result = await axios.put(url, data, {
+                headers: { Authorization: token }
+            });
+
+            return result.data;
+        } catch (error) {
+            console.log('error: ', error);
+            throw error;
         }
     }
 }

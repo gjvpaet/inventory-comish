@@ -12,23 +12,25 @@ exports.getAll = async (req, res, next) => {
             .exec();
 
         const response = {
-            list: products.map(product => {
-                return {
-                    Id: product._id,
-                    BasePrice: product.basePrice,
-                    Description: product.description,
-                    SellingPrice: product.sellingPrice,
-                    Inventory: {
-                        Id: product.inventory._id,
-                        Quantity: product.inventory.quantity,
-                        WarningQuantity: product.inventory.warningQuantity,
-                        CreatedAt: product.inventory.createdAt,
-                        UpdatedAt: product.inventory.updatedAt
-                    },
-                    CreatedAt: product.createdAt,
-                    UpdatedAt: product.updatedAt
-                };
-            }),
+            list: products
+                .map(product => {
+                    return {
+                        Id: product._id,
+                        BasePrice: product.basePrice,
+                        Description: product.description,
+                        SellingPrice: product.sellingPrice,
+                        Inventory: {
+                            Id: product.inventory._id,
+                            Quantity: product.inventory.quantity,
+                            WarningQuantity: product.inventory.warningQuantity,
+                            CreatedAt: product.inventory.createdAt,
+                            UpdatedAt: product.inventory.updatedAt
+                        },
+                        CreatedAt: product.createdAt,
+                        UpdatedAt: product.updatedAt
+                    };
+                })
+                .reverse(),
             count: products.length,
             message: 'Items successfully fetched.'
         };
@@ -109,7 +111,22 @@ exports.createProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
-        let { BasePrice, Description, SellingPrice } = req.body;
+        
+        let {
+            BasePrice,
+            Description,
+            SellingPrice,
+            WarningQuantity
+        } = req.body;
+
+        let product = await Product.findById(productId)
+            .populate('inventory')
+            .exec();
+        
+        await Inventory.update(
+            { _id: product.inventory._id },
+            { $set: { warningQuantity: WarningQuantity } }
+        );
 
         await Product.update(
             { _id: productId },

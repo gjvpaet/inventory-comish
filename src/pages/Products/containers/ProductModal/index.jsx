@@ -5,6 +5,7 @@ import { HalfCircleSpinner } from 'react-epic-spinners';
 import {
     setProduct,
     addProduct,
+    updateProduct,
     setSelectedProduct
 } from '../../../../store/actions';
 
@@ -36,7 +37,7 @@ class ProductModal extends Component {
     async submit(e) {
         e.preventDefault();
 
-        let { formAction, selected, addProduct, setProduct } = this.props;
+        let { formAction, selected, addProduct, setProduct, updateProduct } = this.props;
         let {
             Id = '',
             Quantity = '',
@@ -69,19 +70,31 @@ class ProductModal extends Component {
                     setProduct({ formLoading: false });
 
                     alertify.success(result.message);
-
-                    $('#product-form')
-                        .find(':reset')
-                        .click();
-
                     $('#products-modal').modal('hide');
                 } catch (error) {
                     console.log('error: ', error);
-                    alertify.error(error);
+                    alertify.error('Oops, something went wrong.');
                 }
                 break;
             case 'PUT':
-                data = { ...data, Id };
+                try {
+                    let result = await httpService.updateData(
+                        token,
+                        data,
+                        Id,
+                        'products'
+                    );
+
+                    updateProduct(result.content);
+                    setProduct({ formLoading: false });
+
+                    alertify.success(result.message);
+                    $('#products-modal').modal('hide');
+                } catch (error) {
+                    console.log('error: ', error);
+                    alertify.error('Oops, something went wrong.');
+                }
+                break;
             default:
                 break;
         }
@@ -92,7 +105,6 @@ class ProductModal extends Component {
     }
 
     render() {
-        console.log('selected: ', this.props.selected);
         let { selected, formAction, formLoading } = this.props;
 
         let {
@@ -299,6 +311,7 @@ const mapDispatchToProps = dispatch => {
     return {
         addProduct: data => dispatch(addProduct(data)),
         setProduct: data => dispatch(setProduct(data)),
+        updateProduct: data => dispatch(updateProduct(data)),
         setSelectedProduct: data => dispatch(setSelectedProduct(data))
     };
 };
