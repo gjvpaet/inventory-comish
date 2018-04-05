@@ -3,6 +3,7 @@ import {
     ADD_PRODUCT,
     FETCH_PRODUCTS,
     UPDATE_PRODUCT,
+    DELETE_PRODUCT,
     SET_SELECTED_PRODUCT
 } from './actionTypes';
 
@@ -38,5 +39,12 @@ export const updateProduct = payload => {
     return {
         payload,
         type: UPDATE_PRODUCT
+    };
+};
+
+export const deleteProduct = payload => {
+    return {
+        payload,
+        type: DELETE_PRODUCT
     };
 };

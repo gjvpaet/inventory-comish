@@ -111,7 +111,7 @@ exports.createProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
-        
+
         let {
             BasePrice,
             Description,
@@ -122,7 +122,7 @@ exports.updateProduct = async (req, res, next) => {
         let product = await Product.findById(productId)
             .populate('inventory')
             .exec();
-        
+
         await Inventory.update(
             { _id: product.inventory._id },
             { $set: { warningQuantity: WarningQuantity } }
@@ -211,8 +211,10 @@ exports.getProduct = async (req, res, next) => {
 exports.deleteProduct = async (req, res, next) => {
     try {
         let { productId } = req.params;
+        console.log('productId: ', productId);
 
-        let deletedProduct = await Product.findOneAndRemove(productId);
+        let deletedProduct = await Product.findOneAndRemove({ _id: productId });
+        console.log('deletedProduct: ', deletedProduct);
         await Inventory.remove({ _id: deletedProduct.inventory._id });
 
         res.status(200).json({ message: 'Item successfully deleted.' });

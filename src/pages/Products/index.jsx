@@ -5,7 +5,7 @@ import { Tooltip } from 'react-tippy';
 import React, { Component } from 'react';
 import { SemipolarSpinner } from 'react-epic-spinners';
 
-import { setProduct, fetchProducts } from '../../store/actions';
+import { setProduct, fetchProducts, deleteProduct } from '../../store/actions';
 
 import ProductModal from './containers/ProductModal/index.jsx';
 
@@ -96,7 +96,12 @@ class Products extends Component {
                                 position="bottom"
                                 animation="scale"
                             >
-                                <button className="btn btn-danger btn-fab btn-icon btn-round">
+                                <button
+                                    className="btn btn-danger btn-fab btn-icon btn-round"
+                                    onClick={e =>
+                                        this.deleteProduct(props.original.Id)
+                                    }
+                                >
                                     <i className="now-ui-icons ui-1_simple-remove" />
                                 </button>
                             </Tooltip>
@@ -115,9 +120,9 @@ class Products extends Component {
     }
 
     editProduct(event, product) {
-        this.props.setProduct({ 
-            formAction: 'PUT', 
-            selected:  {
+        this.props.setProduct({
+            formAction: 'PUT',
+            selected: {
                 ...product,
                 WarningQuantity: product.Inventory.WarningQuantity
             }
@@ -125,6 +130,21 @@ class Products extends Component {
 
         $('#products-modal').modal('show');
         $('#product-form').validator();
+    }
+
+    deleteProduct(id) {
+        alertify.confirm('Warning', 'Are you sure you want to delete this?', async () => {
+            try {
+                let result = await httpService.deleteData(token, id, 'products');
+
+                this.props.deleteProduct(id);
+
+                alertify.success(result.message);
+            } catch (error) {
+                console.log('error: ', error);
+                alertify.error('Oops, something went wrong.');
+            }
+        }, () => {});
     }
 
     render() {
@@ -170,6 +190,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         setProduct: data => dispatch(setProduct(data)),
+        deleteProduct: id => dispatch(deleteProduct(id)),
         fetchProducts: data => dispatch(fetchProducts(data))
     };
 };

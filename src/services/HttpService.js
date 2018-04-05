@@ -25,7 +25,7 @@ class HttpService {
             let result = await axios.post(url, data, {
                 headers: { Authorization: token }
             });
-            
+
             return result.data;
         } catch (error) {
             console.log('error: ', error);
@@ -41,6 +41,21 @@ class HttpService {
                 headers: { Authorization: token }
             });
 
+            return result.data;
+        } catch (error) {
+            console.log('error: ', error);
+            throw error;
+        }
+    }
+
+    async deleteData(token, id, entity) {
+        let url = `${siteUrl}api/${entity}/${id}`;
+
+        try {
+            let result = await axios.delete(url, {
+                headers: { Authorization: token }
+            });
+            
             return result.data;
         } catch (error) {
             console.log('error: ', error);

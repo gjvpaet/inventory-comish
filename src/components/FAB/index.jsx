@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu, MainButton, ChildButton } from 'react-mfb';
 
 const fab = props => (
-    <Menu effect="slidein-spring" method="click" position="br">
+    <Menu effect="slidein-spring" method="hover" position="br">
         <MainButton
             style={{ color: 'white' }}
             iconActive="now-ui-icons ui-1_simple-remove"
