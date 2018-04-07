@@ -7,6 +7,7 @@ import { SemipolarSpinner } from 'react-epic-spinners';
 
 import { setProduct, fetchProducts, deleteProduct } from '../../store/actions';
 
+import StockModal from './containers/StockModal/index.jsx';
 import ProductModal from './containers/ProductModal/index.jsx';
 
 import FAB from '../../components/FAB/index.jsx';
@@ -44,6 +45,43 @@ class Products extends Component {
 
     getColums() {
         return [
+            {
+                Header: 'Stocks',
+                Cell: props => (
+                    <div className="text-center">
+                        <Tooltip
+                            title="Add Stock"
+                            position="bottom"
+                            animation="scale"
+                        >
+                            <button
+                                className="btn btn-primary btn-fab btn-icon btn-round"
+                                onClick={e =>
+                                    this.modifyStock(props.original, 'ADD')
+                                }
+                            >
+                                <i className="now-ui-icons ui-1_simple-add" />
+                            </button>
+                        </Tooltip>
+                        &nbsp;
+                        <Tooltip
+                            title="Reduce Stock"
+                            position="right"
+                            animation="scale"
+                        >
+                            <button
+                                className="btn btn-danger btn-fab btn-icon btn-round"
+                                onClick={e =>
+                                    this.modifyStock(props.original, 'SUBTRACT')
+                                }
+                            >
+                                <i className="now-ui-icons ui-1_simple-delete" />
+                            </button>
+                        </Tooltip>
+                    </div>
+                ),
+                Filter: () => {}
+            },
             {
                 Header: 'Description',
                 accessor: 'Description',
@@ -139,18 +177,41 @@ class Products extends Component {
     }
 
     deleteProduct(id) {
-        alertify.confirm('Warning', 'Are you sure you want to delete this?', async () => {
-            try {
-                let result = await httpService.deleteData(token, id, 'products');
+        alertify.confirm(
+            'Warning',
+            'Are you sure you want to delete this?',
+            async () => {
+                try {
+                    let result = await httpService.deleteData(
+                        token,
+                        id,
+                        'products'
+                    );
 
-                this.props.deleteProduct(id);
+                    this.props.deleteProduct(id);
 
-                alertify.success(result.message);
-            } catch (error) {
-                console.log('error: ', error);
-                alertify.error('Oops, something went wrong.');
+                    alertify.success(result.message);
+                } catch (error) {
+                    console.log('error: ', error);
+                    alertify.error('Oops, something went wrong.');
+                }
+            },
+            () => {}
+        );
+    }
+
+    modifyStock(product, action) {
+        this.props.setProduct({
+            selectedStocks: {
+                ...product,
+                Quantity: 0,
+                Action: action,
+                OriginalQuantity: product.Inventory.Quantity
             }
-        }, () => {});
+        });
+
+        $('#stocks-modal').modal('show');
+        $('#stock-form').validator();
     }
 
     render() {
@@ -181,6 +242,7 @@ class Products extends Component {
                     <FAB onClick={this.addProduct} />
                 </div>
                 <ProductModal />
+                <StockModal />
             </Layout>
         );
     }
