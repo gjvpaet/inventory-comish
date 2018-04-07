@@ -47,6 +47,12 @@ class Products extends Component {
             {
                 Header: 'Description',
                 accessor: 'Description',
+                filterMethod: (filter, row) => {
+                    let value = filter.value.toLowerCase();
+                    let description = row[filter.id].toLowerCase();
+
+                    return description.includes(value) ? row : '';
+                },
                 Cell: props => <div className="text-center">{props.value}</div>
             },
             {
