@@ -2,13 +2,19 @@ import { values } from 'lodash';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
 import { Tooltip } from 'react-tippy';
+import { ChildButton } from 'react-mfb';
 import React, { Component } from 'react';
 import { SemipolarSpinner } from 'react-epic-spinners';
+
+import 'react-mfb/mfb.css';
+import 'react-tippy/dist/tippy.css';
+import 'react-table/react-table.css';
 
 import { setProduct, fetchProducts, deleteProduct } from '../../store/actions';
 
 import StockModal from './containers/StockModal/index.jsx';
 import ProductModal from './containers/ProductModal/index.jsx';
+import TransactionModal from './containers/TransactionModal/index.jsx';
 
 import FAB from '../../components/FAB/index.jsx';
 import Card from '../../components/Card/index.jsx';
@@ -200,6 +206,10 @@ class Products extends Component {
         );
     }
 
+    openTransactionModal() {
+        $('#transactions-modal').modal('show');
+    }
+
     modifyStock(product, action) {
         this.props.setProduct({
             selectedStocks: {
@@ -241,10 +251,31 @@ class Products extends Component {
                             }
                         />
                     </Card>
-                    <FAB onClick={this.addProduct} />
+                    <FAB
+                        position="br"
+                        method="hover"
+                        effect="slidein-spring"
+                        mainBtnStyle={{ color: 'white' }}
+                        mainBtnIconActive="now-ui-icons ui-1_simple-remove"
+                        mainBtnIconResting="now-ui-icons design_bullet-list-67"
+                    >
+                        <ChildButton
+                            label="Add Product"
+                            onClick={this.addProduct}
+                            style={{ color: 'white' }}
+                            icon="now-ui-icons ui-1_simple-add"
+                        />
+                        <ChildButton
+                            label="Transactions"
+                            style={{ color: 'white' }}
+                            icon="now-ui-icons files_paper"
+                            onClick={this.openTransactionModal}
+                        />
+                    </FAB>
                 </div>
                 <ProductModal />
                 <StockModal />
+                <TransactionModal />
             </Layout>
         );
     }

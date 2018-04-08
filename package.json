@@ -32,6 +32,7 @@
     "now-ui-dashboard": "^1.0.1",
     "parsleyjs": "^2.8.1",
     "react": "^16.2.0",
+    "react-dates": "^16.5.0",
     "react-dom": "^16.2.0",
     "react-epic-spinners": "^0.2.1",
     "react-mfb": "^0.6.0",

@@ -1,19 +1,14 @@
 import React from 'react';
-import { Menu, MainButton, ChildButton } from 'react-mfb';
+import { Menu, MainButton } from 'react-mfb';
 
 const fab = props => (
-    <Menu effect="slidein-spring" method="hover" position="br">
+    <Menu {...props}>
         <MainButton
-            style={{ color: 'white' }}
-            iconActive="now-ui-icons ui-1_simple-remove"
-            iconResting="now-ui-icons design_bullet-list-67"
+            style={props.mainBtnStyle}
+            iconActive={props.mainBtnIconActive}
+            iconResting={props.mainBtnIconResting}
         />
-        <ChildButton
-            label="Add Product"
-            onClick={props.onClick}
-            style={{ color: 'white' }}
-            icon="now-ui-icons ui-1_simple-add"
-        />
+        {props.children}
     </Menu>
 );
 

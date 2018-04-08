@@ -11,8 +11,6 @@ import {
 
 import Modal from '../../../../components/Modal/index.jsx';
 
-import config from '../../../../../config';
-
 import HttpService from '../../../../services/HttpService';
 
 const httpService = new HttpService();
@@ -293,7 +291,6 @@ class ProductModal extends Component {
                             'Save'
                         )}
                     </button>
-                    <button type="reset" className="d-none" />
                 </div>
             </Modal>
         );
