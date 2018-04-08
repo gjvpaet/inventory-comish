@@ -206,8 +206,10 @@ class Products extends Component {
                 ...product,
                 Quantity: 0,
                 Action: action,
+                InventoryId: product.Inventory.Id,
                 OriginalQuantity: product.Inventory.Quantity
-            }
+            },
+            formAction: 'PUT'
         });
 
         $('#stocks-modal').modal('show');

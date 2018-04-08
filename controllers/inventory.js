@@ -7,7 +7,10 @@ const Transaction = require('../models/transaction');
 
 exports.modifyStock = async (req, res, next) => {
     let { inventoryId } = req.params;
+    console.log('inventoryId: ', inventoryId);
     let { Qty, Type } = req.body;
+    console.log('Type: ', Type);
+    console.log('Qty: ', Qty);
 
     try {
         let inventory = await Inventory.findByIdAndUpdate(inventoryId, {
@@ -16,8 +19,10 @@ exports.modifyStock = async (req, res, next) => {
             },
             $set: { updatedAt: moment().format() }
         }).exec();
+        console.log('inventory: ', inventory);
 
         let updatedInventory = await Inventory.findById(inventoryId).exec();
+        console.log('updatedInventory: ', updatedInventory);
 
         let product = await Product.findOne({
             inventory: updatedInventory._id

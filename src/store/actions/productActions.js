@@ -1,6 +1,7 @@
 import {
     SET_PRODUCT,
     ADD_PRODUCT,
+    UPDATE_STOCKS,
     FETCH_PRODUCTS,
     UPDATE_PRODUCT,
     DELETE_PRODUCT,
@@ -46,5 +47,12 @@ export const deleteProduct = payload => {
     return {
         payload,
         type: DELETE_PRODUCT
+    };
+};
+
+export const updateStocks = payload => {
+    return {
+        payload,
+        type: UPDATE_STOCKS
     };
 };

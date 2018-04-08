@@ -3,6 +3,7 @@ import { keyBy, values } from 'lodash';
 import {
     SET_PRODUCT,
     ADD_PRODUCT,
+    UPDATE_STOCKS,
     FETCH_PRODUCTS,
     UPDATE_PRODUCT,
     DELETE_PRODUCT,
@@ -33,8 +34,8 @@ const productReducer = (state = initialState, action) => {
         case ADD_PRODUCT:
             return {
                 ...state,
-                data: { 
-                    [action.payload.Id]: action.payload, 
+                data: {
+                    [action.payload.Id]: action.payload,
                     ...state.data
                 },
                 selected: null
@@ -51,7 +52,9 @@ const productReducer = (state = initialState, action) => {
             };
             break;
         case DELETE_PRODUCT:
-            let newProducts = values(state.data).filter(product => product.Id !== action.payload);
+            let newProducts = values(state.data).filter(
+                product => product.Id !== action.payload
+            );
 
             return {
                 ...state,
@@ -67,6 +70,20 @@ const productReducer = (state = initialState, action) => {
                     ...selected,
                     [action.payload.field]: action.payload.value
                 }
+            };
+            break;
+        case UPDATE_STOCKS:
+            let products = values(state.data).map(product => {
+                if (product.Inventory.Id === action.payload.Id) {
+                    product.Inventory = { ...action.payload };
+                }
+
+                return product;
+            });
+
+            return {
+                ...state,
+                data: keyBy(products, 'Id')
             };
             break;
         default:

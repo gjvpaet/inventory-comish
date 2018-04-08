@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { HalfCircleSpinner } from 'react-epic-spinners';
 
-import { setProduct } from '../../../../store/actions';
+import { setProduct, updateStocks } from '../../../../store/actions';
 
 import Modal from '../../../../components/Modal/index.jsx';
 
@@ -19,18 +19,63 @@ class StockModal extends Component {
         this.closeModal = this.closeModal.bind(this);
     }
 
+    componentDidMount() {
+        $('#stock-form')
+            .validator(this.props.selectedStocks ? 'validate' : 'update')
+            .on('submit', e => this.submit(e));
+    }
+
     handleChange(field, value) {
         let { selectedStocks, setProduct } = this.props;
 
         setProduct({ selectedStocks: { ...selectedStocks, [field]: value } });
     }
 
+    async submit(e) {
+        e.preventDefault();
+
+        let { selectedStocks, setProduct, updateStocks } = this.props;
+        let { 
+            InventoryId, 
+            Quantity = 0, 
+            Action = 'ADD', 
+            OriginalQuantity 
+        } = selectedStocks || {};
+
+        Quantity = parseInt(Quantity);
+
+        if (Action === 'SUBTRACT' && Quantity > OriginalQuantity) {
+            alertify.error(
+                `Only ${OriginalQuantity} remaining in your stocks. Please try again.`
+            );
+        } else {
+            setProduct({ formLoading: true });
+
+            let data = { Qty: Quantity, Type: Action };
+
+            try {
+                let result = await httpService.updateData(token, data, InventoryId, 'inventory');
+
+                updateStocks(result.content);
+                setProduct({ formLoading: false });
+
+                alertify.success(result.message);
+                $('#stocks-modal').modal('hide');
+            } catch (error) {
+                console.log('error: ', error);
+                alertify.error('Oops, something went wrong.');
+            }
+        }
+    }
+
     closeModal() {
         this.props.setProduct({ formAction: 'POST', selectedStocks: null });
+        $('#stock-form').validator('destroy');
     }
 
     render() {
-        let { formLoading, selectedStocks } = this.props;
+        let { formAction, formLoading, selectedStocks } = this.props;
+        console.log('formAction: ', formAction);
         console.log('selectedStocks: ', selectedStocks);
 
         let { Action = 'ADD', Quantity = 0 } = selectedStocks || {};
@@ -101,7 +146,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setProduct: data => dispatch(setProduct(data))
+        setProduct: data => dispatch(setProduct(data)),
+        updateStocks: data => dispatch(updateStocks(data))
     };
 };
 

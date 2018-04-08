@@ -102,6 +102,7 @@ class ProductModal extends Component {
 
     closeModal() {
         this.props.setProduct({ formAction: 'POST', selected: null });
+        $('#product-form').validator('destroy');
     }
 
     render() {
