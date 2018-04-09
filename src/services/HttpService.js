@@ -14,7 +14,22 @@ class HttpService {
             return result.data;
         } catch (error) {
             console.log('error: ', error);
-            throw err;
+            throw error;
+        }
+    }
+
+    async getData(token, entity, queryObj) {
+        let url = `${siteUrl}api/${entity}?${jparam(queryObj)}`;
+
+        try {
+            let result = await axios.get(url, {
+                headers: { Authorization: token }
+            });
+
+            return result.data;
+        } catch (error) {
+            console.log('error: ', error);
+            throw error;
         }
     }
 
@@ -29,7 +44,7 @@ class HttpService {
             return result.data;
         } catch (error) {
             console.log('error: ', error);
-            throw err;
+            throw error;
         }
     }
 
@@ -55,7 +70,7 @@ class HttpService {
             let result = await axios.delete(url, {
                 headers: { Authorization: token }
             });
-            
+
             return result.data;
         } catch (error) {
             console.log('error: ', error);

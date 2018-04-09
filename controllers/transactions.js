@@ -3,13 +3,45 @@ const mongoose = require('mongoose');
 const Transaction = require('../models/transaction');
 
 exports.getAllTransactions = async (req, res, next) => {
+    let { startDate, endDate } = req.query;
+
     try {
-        let transactions = await Transaction.find()
-            .populate('product')
-            .exec();
+        let transactions = [];
+
+        if (startDate && endDate) {
+            transactions = await Transaction.find({
+                createdAt: {
+                    $gte: startDate,
+                    $lte: endDate
+                }
+            })
+                .populate('product')
+                .exec();
+        } else {
+            transactions = await Transaction.find()
+                .populate('product')
+                .exec();
+        }
+        
+        if (!transactions) {
+            res
+                .status(404)
+                .json({
+                    message: `There's no transactions made within this date.`
+                });
+        }
 
         const response = {
             list: transactions.map(transaction => {
+                const productObj = transaction.product ? {
+                    Id: transaction.product._id,
+                    BasePrice: transaction.product.basePrice,
+                    Description: transaction.product.description,
+                    SellingPrice: transaction.product.sellingPrice,
+                    CreatedAt: transaction.product.createdAt,
+                    UpdatedAt: transaction.product.updatedAt
+                } : {};
+
                 return {
                     Id: transaction._id,
                     Quantity: transaction.quantity,
@@ -17,14 +49,7 @@ exports.getAllTransactions = async (req, res, next) => {
                     NewQuantity: transaction.newQuantity,
                     TotalPrice: transaction.totalPrice,
                     TransactionType: transaction.transactionType,
-                    Product: {
-                        Id: transaction.product._id,
-                        BasePrice: transaction.product.basePrice,
-                        Description: transaction.product.description,
-                        SellingPrice: transaction.product.sellingPrice,
-                        CreatedAt: transaction.product.createdAt,
-                        UpdatedAt: transaction.product.updatedAt
-                    },
+                    Product: productObj,
                     CreatedAt: transaction.createdAt
                 };
             }),
@@ -40,7 +65,7 @@ exports.getAllTransactions = async (req, res, next) => {
 };
 
 exports.getTransactionsByDate = async (req, res, next) => {
-    const { startDate, endDate } = req.params;
+    const { startDate, endDate } = req.query;
 
     try {
         let transactions = await Transaction.find({
@@ -49,8 +74,8 @@ exports.getTransactionsByDate = async (req, res, next) => {
                 $lte: endDate
             }
         })
-        .populate('product')
-        .exec();
+            .populate('product')
+            .exec();
 
         const response = {
             list: transactions.map(transaction => {

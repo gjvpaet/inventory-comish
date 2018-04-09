@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { values } from 'lodash';
+import { values, isEmpty } from 'lodash';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
@@ -10,7 +10,7 @@ import 'react-dates/initialize';
 
 import 'react-dates/lib/css/_datepicker.css';
 
-import { fetchTransactions } from '../../../../store/actions';
+import { setTransactions, fetchTransactions } from '../../../../store/actions';
 
 import Modal from '../../../../components/Modal/index.jsx';
 
@@ -28,9 +28,29 @@ class TransactionModal extends Component {
             startDate: moment().subtract(7, 'days')
         };
 
-        ['closeModal', 'dateChangeHandler', 'focusedInputChangeHandler'].map(
-            fn => (this[fn] = this[fn].bind(this))
-        );
+        [
+            'submit',
+            'closeModal',
+            'dateChangeHandler',
+            'focusedInputChangeHandler'
+        ].map(fn => (this[fn] = this[fn].bind(this)));
+    }
+
+    async componentDidMount() {
+        let { endDate, startDate } = this.state;
+        let { fetchTransactions } = this.props;
+
+        try {
+            let result = await httpService.getData(token, 'transactions', {
+                endDate: endDate.format('YYYY-MM-DD'),
+                startDate: startDate.format('YYYY-MM-DD')
+            });
+
+            fetchTransactions(result.list);
+        } catch (error) {
+            console.log('error: ', error);
+            alertify.error('Oops, something went wrong.');
+        }
     }
 
     dateChangeHandler(value) {
@@ -44,34 +64,112 @@ class TransactionModal extends Component {
         this.setState({ focusedInput });
     }
 
-    closeModal() {}
+    closeModal() {
+        this.props.setTransactions({ data: {} });
+    }
 
     getColumns() {
         let columns = [
             {
-                Header: 'Action'
+                Header: 'Action',
+                accessor: 'TransactionType',
+                Cell: props => (
+                    <div className="text-center">
+                        {props.value === 'ADD'
+                            ? 'Added Stocks'
+                            : props.value === 'SUBTRACT'
+                                ? 'Subtracted Stocks'
+                                : ''}
+                    </div>
+                ),
+                filterMethod: (filter, row) => {
+                    if (filter.value === 'all') {
+                        return row;
+                    }
+
+                    return row[filter.id] === filter.value ? row : '';
+                },
+                Filter: ({ filter, onChange }) => {
+                    return (
+                        <select
+                            onChange={e => onChange(e.target.value)}
+                            style={{ width: '100%' }}
+                            value={
+                                typeof filter !== 'undefined'
+                                    ? filter.value
+                                    : 'all'
+                            }
+                        >
+                            <option value="all">All</option>
+                            <option value="ADD">Add</option>
+                            <option value="SUBTRACT">Subtract</option>
+                        </select>
+                    );
+                }
             },
             {
-                Header: 'Original Quantity'
+                Header: 'Original Quantity',
+                accessor: 'OriginalQuantity',
+                Cell: props => <div className="text-center">{props.value}</div>
             },
             {
-                Header: 'Quantity'
+                Header: 'Quantity',
+                accessor: 'Quantity',
+                Cell: props => <div className="text-center">{props.value}</div>
             },
             {
-                Header: 'New Quantity'
+                Header: 'New Quantity',
+                accessor: 'NewQuantity',
+                Cell: props => <div className="text-center">{props.value}</div>
             },
             {
-                Header: 'Product'
+                Header: 'Product',
+                id: 'Name',
+                accessor: d =>
+                    !isEmpty(d.Product) ? d.Product.Description : '',
+                Cell: props => <div className="text-center">{props.value}</div>
             },
             {
-                Header: 'Total Price'
+                Header: 'Total Price',
+                accessor: 'TotalPrice',
+                Cell: props => (
+                    <div className="text-center">{props.value.toFixed(2)}</div>
+                )
             },
             {
-                Header: 'Date'
+                Header: 'Date',
+                accessor: 'CreatedAt',
+                Cell: props => (
+                    <div className="text-center">
+                        {moment(props.value).format('MMMM Do YYYY, h:mm a')}
+                    </div>
+                )
             }
         ];
 
         return columns;
+    }
+
+    async submit() {
+        let { endDate, startDate } = this.state;
+        let { setTransactions, fetchTransactions } = this.props;
+
+        setTransactions({ fetchLoading: true });
+
+        try {
+            let result = await httpService.getData(token, 'transactions', {
+                endDate: endDate.format('YYYY-MM-DD'),
+                startDate: startDate.format('YYYY-MM-DD')
+            });
+
+            setTransactions({ fetchLoading: false });
+            fetchTransactions(result.list);
+
+            alertify.success(result.message);
+        } catch (error) {
+            console.log('error: ', error);
+            alertify.error('Oops, something went wrong.');
+        }
     }
 
     render() {
@@ -105,6 +203,7 @@ class TransactionModal extends Component {
                             &nbsp; &nbsp;
                             <button
                                 type="button"
+                                onClick={this.submit}
                                 className="btn btn-default btn-round"
                             >
                                 GO
@@ -135,6 +234,7 @@ class TransactionModal extends Component {
                     <button
                         type="button"
                         data-dismiss="modal"
+                        onClick={this.closeModal}
                         className="btn btn-default btn-round"
                     >
                         Close
@@ -154,6 +254,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        setTransactions: data => dispatch(setTransactions(data)),
         fetchTransactions: data => dispatch(fetchTransactions(data))
     };
 };
