@@ -4,7 +4,7 @@ import ReactTable from 'react-table';
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { DateRangePicker } from 'react-dates';
-import { HalfCircleSpinner } from 'react-epic-spinners';
+import { HalfCircleSpinner, SemipolarSpinner } from 'react-epic-spinners';
 
 import 'react-dates/initialize';
 
@@ -113,11 +113,20 @@ class TransactionModal extends Component {
                     </div>
                     <div className="row">
                         <div className="col-md-12 col-sm-12 col-xs-12">
-                            <ReactTable 
+                            <ReactTable
                                 filterable
                                 data={data}
                                 columns={columns}
                                 defaultPageSize={10}
+                                loading={fetchLoading}
+                                loadingText={
+                                    <div style={{ display: 'inline-block' }}>
+                                        <SemipolarSpinner
+                                            color="black"
+                                            size={100}
+                                        />
+                                    </div>
+                                }
                             />
                         </div>
                     </div>
