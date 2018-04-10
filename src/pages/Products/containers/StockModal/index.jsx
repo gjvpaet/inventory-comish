@@ -75,9 +75,6 @@ class StockModal extends Component {
 
     render() {
         let { formAction, formLoading, selectedStocks } = this.props;
-        console.log('formAction: ', formAction);
-        console.log('selectedStocks: ', selectedStocks);
-
         let { Action = 'ADD', Quantity = 0 } = selectedStocks || {};
 
         return (

@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { values } from 'lodash';
 import ReactTable from 'react-table';
 import { connect } from 'react-redux';
@@ -9,6 +10,8 @@ import { SemipolarSpinner } from 'react-epic-spinners';
 import 'react-mfb/mfb.css';
 import 'react-tippy/dist/tippy.css';
 import 'react-table/react-table.css';
+
+import { convertArrayOfObjectsToCSV } from '../../utils/csvConverter';
 
 import { setProduct, fetchProducts, deleteProduct } from '../../store/actions';
 
@@ -28,7 +31,7 @@ class Products extends Component {
     constructor(props) {
         super(props);
 
-        ['addProduct', 'getProducts'].map(
+        ['export', 'addProduct', 'getProducts'].map(
             fn => (this[fn] = this[fn].bind(this))
         );
     }
@@ -42,6 +45,17 @@ class Products extends Component {
 
         try {
             let result = await httpService.getAllData(token, 'products');
+
+            result.list = result.list.map(data => {
+                data.CreatedDate = moment(data.CreatedAt).format(
+                    'MMMM Do YYYY, h:mm a'
+                );
+                data.UpdatedDate = moment(data.UpdatedAt).format(
+                    'MMMM Do YYYY, h:mm a'
+                );
+
+                return data;
+            });
 
             fetchProducts(result.list);
         } catch (error) {
@@ -120,6 +134,36 @@ class Products extends Component {
                 accessor: d => d.Inventory.WarningQuantity,
                 id: 'WarningQuantity',
                 Cell: props => <div className="text-center">{props.value}</div>
+            },
+            {
+                Header: 'Created At',
+                accessor: 'CreatedDate',
+                filterMethod: (filter, row) => {
+                    let value = filter.value.toLowerCase();
+                    let createdDate = row._original[filter.id].toLowerCase();
+
+                    return createdDate.includes(value) ? row : '';
+                },
+                Cell: props => (
+                    <div className="text-center">
+                        {props.original.CreatedDate}
+                    </div>
+                )
+            },
+            {
+                Header: 'UpdatedAt',
+                accessor: 'UpdatedDate',
+                filterMethod: (filter, row) => {
+                    let value = filter.value.toLowerCase();
+                    let updatedDate = row._original[filter.id].toLowerCase();
+
+                    return updatedDate.includes(value) ? row : '';
+                },
+                Cell: props => (
+                    <div className="text-center">
+                        {props.original.UpdatedDate}
+                    </div>
+                )
             },
             {
                 Header: 'Actions',
@@ -226,6 +270,44 @@ class Products extends Component {
         $('#stock-form').validator();
     }
 
+    export() {
+        let rowData = [];
+        let filteredData = this.reactTable.getResolvedState().sortedData;
+
+        filteredData.map(data => {
+            let dataObj = {};
+
+            dataObj['Description'] = data.Description;
+            dataObj['Base Price'] = data.BasePrice;
+            dataObj['Selling Price'] = data.SellingPrice;
+            dataObj['Quantity'] = data.Quantity;
+            dataObj['Warning Quantity'] = data.WarningQuantity;
+            dataObj['Created At'] = moment(data._original.CreatedAt).format('MMMM Do YYYY');
+            dataObj['Updated At'] = moment(data._original.UpdatedAt).format('MMMM Do YYYY');
+
+            rowData.push(dataObj);
+        });
+
+        let data, filename, link;
+        let csv = convertArrayOfObjectsToCSV({ data: rowData });
+
+        if (!csv) {
+            return false;
+        }
+
+        filename = `${+new Date}.csv`;
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = `data:text/csv;charset=utf-8,${csv}`;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+    }
+
     render() {
         let columns = this.getColums();
         let { data, fetchLoading } = this.props;
@@ -240,6 +322,7 @@ class Products extends Component {
                             columns={columns}
                             defaultPageSize={10}
                             loading={fetchLoading}
+                            ref={r => (this.reactTable = r)}
                             className="-striped -highlight"
                             loadingText={
                                 <div style={{ display: 'inline-block' }}>
@@ -270,6 +353,12 @@ class Products extends Component {
                             style={{ color: 'white' }}
                             icon="now-ui-icons files_paper"
                             onClick={this.openTransactionModal}
+                        />
+                        <ChildButton
+                            label="Export"
+                            onClick={this.export}
+                            style={{ color: 'white' }}
+                            icon="now-ui-icons arrows-1_cloud-download-93"
                         />
                     </FAB>
                 </div>
