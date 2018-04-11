@@ -10,6 +10,8 @@ import 'react-dates/initialize';
 
 import 'react-dates/lib/css/_datepicker.css';
 
+import { convertArrayOfObjectsToCSV } from '../../../../utils/csvConverter';
+
 import { setTransactions, fetchTransactions } from '../../../../store/actions';
 
 import Modal from '../../../../components/Modal/index.jsx';
@@ -29,6 +31,7 @@ class TransactionModal extends Component {
         };
 
         [
+            'export',
             'submit',
             'closeModal',
             'dateChangeHandler',
@@ -125,8 +128,7 @@ class TransactionModal extends Component {
             {
                 Header: 'Product',
                 id: 'Name',
-                accessor: d =>
-                    !isEmpty(d.Product) ? d.Product.Description : '',
+                accessor: d => !isEmpty(d.Product) ? d.Product.Description : '',
                 Cell: props => <div className="text-center">{props.value}</div>
             },
             {
@@ -148,6 +150,46 @@ class TransactionModal extends Component {
         ];
 
         return columns;
+    }
+
+    export() {
+        let rowData = [];
+        let filteredData = this.reactTable.getResolvedState().sortedData;
+
+        filteredData.map(data => {
+            let dataObj = {};
+
+            dataObj['Action'] = data.TransactionType;
+            dataObj['Original Quantity'] = data.OriginalQuantity;
+            dataObj['Quantity'] = data.Quantity;
+            dataObj['New Quantity'] = data.NewQuantity;
+            dataObj['Product Name'] = data.Name;
+            dataObj['Total Price'] = data.TotalPrice;
+            dataObj['Date'] = moment(data._original.CreatedAt).format(
+                'MMMM Do YYYY'
+            );
+
+            rowData.push(dataObj);
+        });
+
+        let data, filename, link;
+        let csv = convertArrayOfObjectsToCSV({ data: rowData });
+
+        if (!csv) {
+            return false;
+        }
+
+        filename = `${+new Date()}.csv`;
+
+        if (!csv.match(/^data:text\/csv/i)) {
+            csv = `data:text/csv;charset=utf-8,${csv}`;
+        }
+        data = encodeURI(csv);
+
+        link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
     }
 
     async submit() {
@@ -209,6 +251,16 @@ class TransactionModal extends Component {
                                 GO
                             </button>
                         </div>
+                        <div className="col-md-4 col-sm-4 col-xs-4 d-flex justify-content-end">
+                            <button
+                                type="button"
+                                className="btn btn-primary btn-round"
+                                onClick={this.export}
+                            >
+                                <i className="now-ui-icons arrows-1_cloud-download-93" />{' '}
+                                Export
+                            </button>
+                        </div>
                     </div>
                     <div className="row">
                         <div className="col-md-12 col-sm-12 col-xs-12">
@@ -218,6 +270,7 @@ class TransactionModal extends Component {
                                 columns={columns}
                                 defaultPageSize={10}
                                 loading={fetchLoading}
+                                ref={r => (this.reactTable = r)}
                                 loadingText={
                                     <div style={{ display: 'inline-block' }}>
                                         <SemipolarSpinner
