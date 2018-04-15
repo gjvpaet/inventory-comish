@@ -3,6 +3,22 @@ import to from 'await-to-js';
 import jparam from 'jquery-param';
 
 class HttpService {
+    async authenticate(email, password) {
+        let url = `${siteUrl}api/users/login`;
+
+        try {
+            let result = await axios.post(url, {
+                Email: email,
+                Password: password
+            });
+
+            return result.data;
+        } catch (error) {
+            console.log('error: ', error);
+            throw error;
+        }
+    }
+
     async getAllData(token, entity) {
         let url = `${siteUrl}api/${entity}`;
 
