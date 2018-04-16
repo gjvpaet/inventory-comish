@@ -54,7 +54,7 @@ class StockModal extends Component {
             let data = { Qty: Quantity, Type: Action };
 
             try {
-                let result = await httpService.updateData(token, data, InventoryId, 'inventory');
+                let result = await httpService.updateData(data, InventoryId, 'inventory');
 
                 updateStocks(result.content);
                 setProduct({ formLoading: false });

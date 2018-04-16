@@ -44,7 +44,7 @@ class TransactionModal extends Component {
         let { fetchTransactions } = this.props;
 
         try {
-            let result = await httpService.getData(token, 'transactions', {
+            let result = await httpService.getData('transactions', {
                 endDate: endDate.format('YYYY-MM-DD'),
                 startDate: startDate.format('YYYY-MM-DD')
             });
@@ -199,7 +199,7 @@ class TransactionModal extends Component {
         setTransactions({ fetchLoading: true });
 
         try {
-            let result = await httpService.getData(token, 'transactions', {
+            let result = await httpService.getData('transactions', {
                 endDate: endDate.format('YYYY-MM-DD'),
                 startDate: startDate.format('YYYY-MM-DD')
             });

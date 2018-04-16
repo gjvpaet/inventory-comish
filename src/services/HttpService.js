@@ -24,7 +24,7 @@ class HttpService {
 
         try {
             let result = await axios.get(url, {
-                headers: { Authorization: token }
+                headers: { Authorization: localStorage.getItem('token') }
             });
 
             return result.data;
@@ -39,7 +39,7 @@ class HttpService {
 
         try {
             let result = await axios.get(url, {
-                headers: { Authorization: token }
+                headers: { Authorization: localStorage.getItem('token') }
             });
 
             return result.data;
@@ -49,12 +49,12 @@ class HttpService {
         }
     }
 
-    async inserData(token, data, entity) {
+    async insertData(token, data, entity) {
         let url = `${siteUrl}api/${entity}`;
 
         try {
             let result = await axios.post(url, data, {
-                headers: { Authorization: token }
+                headers: { Authorization: localStorage.getItem('token') }
             });
 
             return result.data;
@@ -69,7 +69,7 @@ class HttpService {
 
         try {
             let result = await axios.put(url, data, {
-                headers: { Authorization: token }
+                headers: { Authorization: localStorage.getItem('token') }
             });
 
             return result.data;
@@ -84,7 +84,7 @@ class HttpService {
 
         try {
             let result = await axios.delete(url, {
-                headers: { Authorization: token }
+                headers: { Authorization: localStorage.getItem('token') }
             });
 
             return result.data;

@@ -44,7 +44,7 @@ class Products extends Component {
         let { fetchProducts } = this.props;
 
         try {
-            let result = await httpService.getAllData(token, 'products');
+            let result = await httpService.getAllData('products');
 
             result.list = result.list.map(data => {
                 data.CreatedDate = moment(data.CreatedAt).format(
@@ -233,7 +233,6 @@ class Products extends Component {
             async () => {
                 try {
                     let result = await httpService.deleteData(
-                        token,
                         id,
                         'products'
                     );

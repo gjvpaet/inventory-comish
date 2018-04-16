@@ -58,8 +58,7 @@ class ProductModal extends Component {
         switch (formAction) {
             case 'POST':
                 try {
-                    let result = await httpService.inserData(
-                        token,
+                    let result = await httpService.insertData(
                         data,
                         'products'
                     );
@@ -77,7 +76,6 @@ class ProductModal extends Component {
             case 'PUT':
                 try {
                     let result = await httpService.updateData(
-                        token,
                         data,
                         Id,
                         'products'
