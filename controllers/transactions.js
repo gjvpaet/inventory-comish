@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const Transaction = require('../models/transaction');
 
 exports.getAllTransactions = async (req, res, next) => {
+    let { newToken } = req;
+
     let { startDate, endDate } = req.query;
 
     try {
@@ -32,6 +34,7 @@ exports.getAllTransactions = async (req, res, next) => {
         }
 
         const response = {
+            newToken,
             list: transactions.map(transaction => {
                 const productObj = transaction.product ? {
                     Id: transaction.product._id,
@@ -65,6 +68,8 @@ exports.getAllTransactions = async (req, res, next) => {
 };
 
 exports.getTransactionsByDate = async (req, res, next) => {
+    let { newToken } = req;
+
     const { startDate, endDate } = req.query;
 
     try {
@@ -78,6 +83,7 @@ exports.getTransactionsByDate = async (req, res, next) => {
             .exec();
 
         const response = {
+            newToken,
             list: transactions.map(transaction => {
                 return {
                     Id: transaction._id,
