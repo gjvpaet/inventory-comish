@@ -26,6 +26,8 @@ class HttpService {
             let result = await axios.get(url, {
                 headers: { Authorization: localStorage.getItem('token') }
             });
+            
+            localStorage.setItem('token', result.data.newToken);
 
             return result.data;
         } catch (error) {
@@ -42,6 +44,8 @@ class HttpService {
                 headers: { Authorization: localStorage.getItem('token') }
             });
 
+            localStorage.setItem('token', result.data.newToken);
+
             return result.data;
         } catch (error) {
             console.log('error: ', error);
@@ -56,6 +60,8 @@ class HttpService {
             let result = await axios.post(url, data, {
                 headers: { Authorization: localStorage.getItem('token') }
             });
+
+            localStorage.setItem('token', result.data.newToken);
 
             return result.data;
         } catch (error) {
@@ -72,6 +78,8 @@ class HttpService {
                 headers: { Authorization: localStorage.getItem('token') }
             });
 
+            localStorage.setItem('token', result.data.newToken);
+
             return result.data;
         } catch (error) {
             console.log('error: ', error);
@@ -86,6 +94,8 @@ class HttpService {
             let result = await axios.delete(url, {
                 headers: { Authorization: localStorage.getItem('token') }
             });
+
+            localStorage.setItem('token', result.data.newToken);
 
             return result.data;
         } catch (error) {

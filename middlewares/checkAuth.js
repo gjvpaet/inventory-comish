@@ -5,7 +5,18 @@ module.exports = (req, res, next) => {
         const token = req.headers.authorization;
 
         const decoded = jwt.verify(token, process.env.JWT_KEY);
-        req.userData = decoded;
+        let { email, userId } = decoded;
+
+        let newToken = jwt.sign(
+            {
+                email,
+                userId
+            },
+            process.env.JWT_KEY,
+            { expiresIn: '1h' }
+        );
+
+        req.newToken = newToken;
 
         next();
     } catch (error) {

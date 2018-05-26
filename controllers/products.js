@@ -6,12 +6,15 @@ const Inventory = require('../models/inventory');
 const Transaction = require('../models/transaction');
 
 exports.getAll = async (req, res, next) => {
+    let { newToken } = req;
+
     try {
         let products = await Product.find()
             .populate('inventory')
             .exec();
 
         const response = {
+            newToken,
             list: products
                 .map(product => {
                     return {
@@ -43,6 +46,8 @@ exports.getAll = async (req, res, next) => {
 };
 
 exports.createProduct = async (req, res, next) => {
+    let { newToken } = req;
+
     let {
         Quantity,
         BasePrice,
@@ -83,6 +88,7 @@ exports.createProduct = async (req, res, next) => {
         await transaction.save();
 
         const response = {
+            newToken,
             content: {
                 Id: createdProduct._id,
                 Description: createdProduct.description,
@@ -110,6 +116,8 @@ exports.createProduct = async (req, res, next) => {
 
 exports.updateProduct = async (req, res, next) => {
     try {
+        let { newToken } = req;
+
         let { productId } = req.params;
 
         let {
@@ -145,6 +153,7 @@ exports.updateProduct = async (req, res, next) => {
             .exec();
 
         const response = {
+            newToken,
             content: {
                 Id: updatedProduct._id,
                 BasePrice: updatedProduct.basePrice,
@@ -172,6 +181,8 @@ exports.updateProduct = async (req, res, next) => {
 
 exports.getProduct = async (req, res, next) => {
     try {
+        let { newToken } = req;
+
         let { productId } = req.params;
 
         let product = await Product.findById(productId)
@@ -183,6 +194,7 @@ exports.getProduct = async (req, res, next) => {
         }
 
         const response = {
+            newToken,
             content: {
                 Id: product._id,
                 BasePrice: product.basePrice,
@@ -210,14 +222,18 @@ exports.getProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
     try {
+        let { newToken } = req;
+
         let { productId } = req.params;
-        console.log('productId: ', productId);
 
         let deletedProduct = await Product.findOneAndRemove({ _id: productId });
         console.log('deletedProduct: ', deletedProduct);
         await Inventory.remove({ _id: deletedProduct.inventory._id });
 
-        res.status(200).json({ message: 'Item successfully deleted.' });
+        res.status(200).json({ 
+            newToken,
+            message: 'Item successfully deleted.' 
+        });
     } catch (error) {
         console.log('error: ', error);
         res.status(500).json({ error });
