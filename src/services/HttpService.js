@@ -19,7 +19,7 @@ class HttpService {
         }
     }
 
-    async getAllData(token, entity) {
+    async getAllData(entity) {
         let url = `${siteUrl}api/${entity}`;
 
         try {
@@ -34,7 +34,7 @@ class HttpService {
         }
     }
 
-    async getData(token, entity, queryObj) {
+    async getData(entity, queryObj) {
         let url = `${siteUrl}api/${entity}?${jparam(queryObj)}`;
 
         try {
@@ -49,7 +49,7 @@ class HttpService {
         }
     }
 
-    async insertData(token, data, entity) {
+    async insertData(data, entity) {
         let url = `${siteUrl}api/${entity}`;
 
         try {
@@ -64,7 +64,7 @@ class HttpService {
         }
     }
 
-    async updateData(token, data, id, entity) {
+    async updateData(data, id, entity) {
         let url = `${siteUrl}api/${entity}/${id}`;
 
         try {
@@ -79,7 +79,7 @@ class HttpService {
         }
     }
 
-    async deleteData(token, id, entity) {
+    async deleteData(id, entity) {
         let url = `${siteUrl}api/${entity}/${id}`;
 
         try {
