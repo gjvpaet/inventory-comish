@@ -8,7 +8,7 @@ class Dashboard extends Component {
     render() {
         return (
             <Layout title="Dashboard">
-                <p>I love you triz!</p>
+                <p>dsdfs</p>
             </Layout>
         );
     }

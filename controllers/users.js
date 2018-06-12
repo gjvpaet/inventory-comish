@@ -5,11 +5,11 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 
 exports.signup = async (req, res) => {
-    let { Email, Password } = req.body;
+    let { Email, Password, FirstName, LastName } = req.body;
 
     try {
         let existingUser = await User.find({ email: Email }).exec();
-        
+
         if (existingUser.length) {
             return res.status(409).json({ message: 'Email already exist.' });
         } else {
@@ -21,7 +21,9 @@ exports.signup = async (req, res) => {
                         const user = new User({
                             _id: new mongoose.Types.ObjectId(),
                             email: Email,
-                            password: hash
+                            password: hash,
+                            lastName: LastName,
+                            firstName: FirstName,
                         });
 
                         await user.save();
@@ -47,6 +49,7 @@ exports.login = async (req, res, next) => {
 
     try {
         let user = await User.findOne({ email: Email }).exec();
+        console.log('user: ', user);
 
         if (!user) {
             return res.status(401).json({ message: 'Log in failed.' });
